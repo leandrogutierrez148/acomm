@@ -17,7 +17,7 @@ services:
 
   http-server:
     build:
-      context: .
+      context: ./docker
       dockerfile: Dockerfile.http
     ports:
       - "127.0.0.1:8484:8484"
@@ -29,7 +29,7 @@ services:
 
   mcp-server:
     build:
-      context: .
+      context: ./docker
       dockerfile: Dockerfile.mcp
     ports:
       - "127.0.0.1:8080:8080"
@@ -42,7 +42,7 @@ services:
 
   chat-agent:
     build:
-      context: ./agent
+      context: ./docker
       dockerfile: Dockerfile.agent
     ports:
       - "127.0.0.1:8501:8501"

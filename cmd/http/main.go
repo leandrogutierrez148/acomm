@@ -8,15 +8,15 @@ import (
 	"syscall"
 
 	"github.com/joho/godotenv"
-	http_server "github.com/lgutierrez148/acomm/app/http"
-	"github.com/lgutierrez148/acomm/app/http/brands"
-	"github.com/lgutierrez148/acomm/app/http/categories"
-	"github.com/lgutierrez148/acomm/app/http/items"
-	"github.com/lgutierrez148/acomm/app/http/orders"
-	"github.com/lgutierrez148/acomm/app/http/products"
-	"github.com/lgutierrez148/acomm/app/http/specifications"
-	"github.com/lgutierrez148/acomm/database"
-	"github.com/lgutierrez148/acomm/repositories"
+	"github.com/lgutierrez148/acomm/internal/database"
+	http_server "github.com/lgutierrez148/acomm/internal/http"
+	"github.com/lgutierrez148/acomm/internal/http/brands"
+	"github.com/lgutierrez148/acomm/internal/http/categories"
+	"github.com/lgutierrez148/acomm/internal/http/items"
+	"github.com/lgutierrez148/acomm/internal/http/orders"
+	"github.com/lgutierrez148/acomm/internal/http/products"
+	"github.com/lgutierrez148/acomm/internal/http/specifications"
+	"github.com/lgutierrez148/acomm/internal/repositories"
 )
 
 func main() {

@@ -1,10 +1,13 @@
 tidy ::
 	@go mod tidy && go mod vendor
 
-run ::
-	@go run cmd/server/main.go
+run-http::
+	@go run cmd/http/main.go
 
-test ::
+run-mcp::
+	@go run cmd/mcp/main.go
+
+test::
 	@go test -v -count=1 -race ./... -coverprofile=coverage.out -covermode=atomic
 
 docker-up ::

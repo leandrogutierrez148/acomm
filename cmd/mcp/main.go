@@ -5,15 +5,15 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/lgutierrez148/acomm/app/mcp"
-	"github.com/lgutierrez148/acomm/app/mcp/brands"
-	"github.com/lgutierrez148/acomm/app/mcp/categories"
-	"github.com/lgutierrez148/acomm/app/mcp/items"
-	"github.com/lgutierrez148/acomm/app/mcp/orders"
-	"github.com/lgutierrez148/acomm/app/mcp/products"
-	"github.com/lgutierrez148/acomm/app/mcp/specifications"
-	"github.com/lgutierrez148/acomm/database"
-	"github.com/lgutierrez148/acomm/repositories"
+	"github.com/lgutierrez148/acomm/internal/database"
+	"github.com/lgutierrez148/acomm/internal/mcp"
+	"github.com/lgutierrez148/acomm/internal/mcp/brands"
+	"github.com/lgutierrez148/acomm/internal/mcp/categories"
+	"github.com/lgutierrez148/acomm/internal/mcp/items"
+	"github.com/lgutierrez148/acomm/internal/mcp/orders"
+	"github.com/lgutierrez148/acomm/internal/mcp/products"
+	"github.com/lgutierrez148/acomm/internal/mcp/specifications"
+	"github.com/lgutierrez148/acomm/internal/repositories"
 )
 
 func main() {

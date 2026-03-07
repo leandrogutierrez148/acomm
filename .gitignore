@@ -1,10 +1,10 @@
-/vendor
+vendor
 .vscode/
 .code-workspace
 *.DS_Store
 __debug_bin*
 coverage.out
-/mocks
+mocks
 .venv
 secrets
-/dist
+dist
