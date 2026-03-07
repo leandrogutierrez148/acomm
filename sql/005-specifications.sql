@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS specifications (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    key VARCHAR(256) NOT NULL,
+    value VARCHAR(256) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);

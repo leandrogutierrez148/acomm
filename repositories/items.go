@@ -1,0 +1,44 @@
+package repositories
+
+import (
+	"github.com/lgutierrez148/acomm/models"
+	"gorm.io/gorm"
+)
+
+type ItemsRepository struct {
+	db *gorm.DB
+}
+
+func NewItemsRepository(db *gorm.DB) *ItemsRepository {
+	return &ItemsRepository{db: db}
+}
+
+func (r *ItemsRepository) Create(item *models.Item) error {
+	return r.db.Create(item).Error
+}
+
+func (r *ItemsRepository) FindByID(id uint) (*models.Item, error) {
+	var item models.Item
+	err := r.db.First(&item, id).Error
+	return &item, err
+}
+
+func (r *ItemsRepository) FindAll() ([]models.Item, error) {
+	var items []models.Item
+	err := r.db.Find(&items).Error
+	return items, err
+}
+
+func (r *ItemsRepository) FindByProductID(productID uint) ([]models.Item, error) {
+	var items []models.Item
+	err := r.db.Where("product_id = ?", productID).Find(&items).Error
+	return items, err
+}
+
+func (r *ItemsRepository) Update(item *models.Item) error {
+	return r.db.Save(item).Error
+}
+
+func (r *ItemsRepository) Delete(id uint) error {
+	return r.db.Delete(&models.Item{}, id).Error
+}

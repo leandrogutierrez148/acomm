@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS items (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    sku VARCHAR(32) UNIQUE,
+    price DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
