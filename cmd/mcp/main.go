@@ -28,6 +28,8 @@ func main() {
 	if host == "" {
 		host = "localhost"
 	}
+
+	// Initialize database connection
 	db, close := database.New(
 		os.Getenv("POSTGRES_USER"),
 		os.Getenv("POSTGRES_PASSWORD"),

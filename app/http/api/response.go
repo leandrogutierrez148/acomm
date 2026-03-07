@@ -7,12 +7,15 @@ import (
 
 func OKResponse(w http.ResponseWriter, data any) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(data); err != nil {
+	b, err := json.Marshal(data)
+	if err != nil {
 		writeErrorJSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(b)
 }
 
 func writeErrorJSON(w http.ResponseWriter, status int, msg string) {
@@ -29,10 +32,13 @@ func ErrorResponse(w http.ResponseWriter, status int, message string) {
 
 func OKCreatedResponse(w http.ResponseWriter, data any) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
 
-	if err := json.NewEncoder(w).Encode(data); err != nil {
+	b, err := json.Marshal(data)
+	if err != nil {
 		writeErrorJSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Write(b)
 }

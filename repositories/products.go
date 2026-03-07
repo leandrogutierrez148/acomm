@@ -3,16 +3,17 @@ package repositories
 import (
 	"strconv"
 
+	"github.com/lgutierrez148/acomm/interfaces"
 	"github.com/lgutierrez148/acomm/models"
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 )
 
 type ProductsRepository struct {
-	db *gorm.DB
+	db interfaces.IDatabase
 }
 
-func NewProductsRepository(db *gorm.DB) *ProductsRepository {
+func NewProductsRepository(db interfaces.IDatabase) *ProductsRepository {
 	return &ProductsRepository{
 		db: db,
 	}
@@ -20,7 +21,7 @@ func NewProductsRepository(db *gorm.DB) *ProductsRepository {
 
 func (r *ProductsRepository) GetAllProducts() ([]models.Product, error) {
 	var products []models.Product
-	if err := r.db.Preload("Category").Preload("Items").Preload("Brand").Find(&products).Error; err != nil {
+	if err := r.db.Preload("Category").Preload("Items").Preload("Brand").Find(&products).GetError(); err != nil {
 		return nil, err
 	}
 	return products, nil
@@ -29,7 +30,7 @@ func (r *ProductsRepository) GetAllProducts() ([]models.Product, error) {
 func (r *ProductsRepository) GetProductsPaginated(offset, limit int) ([]models.Product, int64, error) {
 	var products []models.Product
 
-	if err := r.db.Preload("Category").Preload("Items").Preload("Brand").Offset(offset).Limit(limit).Find(&products).Error; err != nil {
+	if err := r.db.Preload("Category").Preload("Items").Preload("Brand").Offset(offset).Limit(limit).Find(&products).GetError(); err != nil {
 		return nil, 0, err
 	}
 
@@ -59,7 +60,7 @@ func (r *ProductsRepository) SearchProductsPaginated(offset, limit int, category
 
 	query = query.Group("products.id")
 
-	if err := query.Offset(offset).Limit(limit).Find(&products).Error; err != nil {
+	if err := query.Offset(offset).Limit(limit).Find(&products).GetError(); err != nil {
 		return nil, 0, err
 	}
 
@@ -83,7 +84,7 @@ func (r *ProductsRepository) SearchProductsPaginated(offset, limit int, category
 
 func (r *ProductsRepository) GetProductByID(id uint) (*models.Product, error) {
 	var product models.Product
-	if err := r.db.Preload("Category").Preload("Items").Preload("Brand").Where("products.id = ?", id).First(&product).Error; err != nil {
+	if err := r.db.Preload("Category").Preload("Items").Preload("Brand").Where("products.id = ?", id).First(&product).GetError(); err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
 		}

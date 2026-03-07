@@ -1,15 +1,15 @@
 package repositories
 
 import (
+	"github.com/lgutierrez148/acomm/interfaces"
 	"github.com/lgutierrez148/acomm/models"
-	"gorm.io/gorm"
 )
 
 type CategoriesRepository struct {
-	db *gorm.DB
+	db interfaces.IDatabase
 }
 
-func NewCategoriesRepository(db *gorm.DB) *CategoriesRepository {
+func NewCategoriesRepository(db interfaces.IDatabase) *CategoriesRepository {
 	return &CategoriesRepository{
 		db: db,
 	}
@@ -17,14 +17,14 @@ func NewCategoriesRepository(db *gorm.DB) *CategoriesRepository {
 
 func (r *CategoriesRepository) GetAllCategories() ([]models.Category, error) {
 	var categories []models.Category
-	if err := r.db.Find(&categories).Error; err != nil {
+	if err := r.db.Find(&categories).GetError(); err != nil {
 		return nil, err
 	}
 	return categories, nil
 }
 
 func (r *CategoriesRepository) CreateCategory(category *models.Category) error {
-	if err := r.db.Create(category).Error; err != nil {
+	if err := r.db.Create(category).GetError(); err != nil {
 		return err
 	}
 	return nil

@@ -1,44 +1,44 @@
 package repositories
 
 import (
+	"github.com/lgutierrez148/acomm/interfaces"
 	"github.com/lgutierrez148/acomm/models"
-	"gorm.io/gorm"
 )
 
 type ItemsRepository struct {
-	db *gorm.DB
+	db interfaces.IDatabase
 }
 
-func NewItemsRepository(db *gorm.DB) *ItemsRepository {
+func NewItemsRepository(db interfaces.IDatabase) *ItemsRepository {
 	return &ItemsRepository{db: db}
 }
 
 func (r *ItemsRepository) Create(item *models.Item) error {
-	return r.db.Create(item).Error
+	return r.db.Create(item).GetError()
 }
 
 func (r *ItemsRepository) FindByID(id uint) (*models.Item, error) {
 	var item models.Item
-	err := r.db.First(&item, id).Error
+	err := r.db.First(&item, id).GetError()
 	return &item, err
 }
 
 func (r *ItemsRepository) FindAll() ([]models.Item, error) {
 	var items []models.Item
-	err := r.db.Find(&items).Error
+	err := r.db.Find(&items).GetError()
 	return items, err
 }
 
 func (r *ItemsRepository) FindByProductID(productID uint) ([]models.Item, error) {
 	var items []models.Item
-	err := r.db.Where("product_id = ?", productID).Find(&items).Error
+	err := r.db.Where("product_id = ?", productID).Find(&items).GetError()
 	return items, err
 }
 
 func (r *ItemsRepository) Update(item *models.Item) error {
-	return r.db.Save(item).Error
+	return r.db.Save(item).GetError()
 }
 
 func (r *ItemsRepository) Delete(id uint) error {
-	return r.db.Delete(&models.Item{}, id).Error
+	return r.db.Delete(&models.Item{}, id).GetError()
 }
