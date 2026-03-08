@@ -21,8 +21,10 @@ func (o *Order) TableName() string {
 
 // ItemOrder represents an item within an Order.
 type ItemOrder struct {
-	ItemID  int `json:"item_id" gorm:"primaryKey"`
-	OrderID int `json:"order_id" gorm:"primaryKey;not null"`
+	ItemID   int     `json:"item_id" gorm:"primaryKey"`
+	OrderID  int     `json:"order_id" gorm:"primaryKey;not null"`
+	Quantity int     `json:"quantity" gorm:"not null"`
+	Price    float64 `json:"price" gorm:"not null"`
 }
 
 func (io *ItemOrder) TableName() string {

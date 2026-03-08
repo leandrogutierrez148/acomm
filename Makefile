@@ -10,8 +10,11 @@ run-mcp::
 test::
 	@go test -v -count=1 -race ./... -coverprofile=coverage.out -covermode=atomic
 
-docker-up ::
+up::
 	docker compose up -d
 
-docker-down ::
+down::
 	docker compose down
+
+clear::
+	docker compose down -v --remove-orphans

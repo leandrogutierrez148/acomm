@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/lgutierrez148/acomm/internal/inbound"
 	"github.com/lgutierrez148/acomm/internal/interfaces"
-	"github.com/lgutierrez148/acomm/internal/models"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -78,13 +78,15 @@ func (h *OrdersMCPHandler) handleCreateOrder(ctx context.Context, request mcp.Ca
 		return mcp.NewToolResultError("order_json is required"), nil
 	}
 
-	var order models.Order
+	var req inbound.CreateOrderRequest
 
-	if err := json.Unmarshal([]byte(orderJSON), &order); err != nil {
+	if err := json.Unmarshal([]byte(orderJSON), &req); err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("Failed to parse order_json: %v", err)), nil
 	}
 
-	if err := h.repo.Create(&order); err != nil {
+	order := req.ToDomain()
+
+	if err := h.repo.Create(order); err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("Failed to create order: %v", err)), nil
 	}
 

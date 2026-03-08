@@ -3,7 +3,9 @@ package inbound
 import "github.com/lgutierrez148/acomm/internal/models"
 
 type ItemOrderRequest struct {
-	ItemID int `json:"item_id"`
+	ItemID   int     `json:"item_id"`
+	Quantity int     `json:"quantity"`
+	Price    float64 `json:"price"`
 }
 
 type CreateOrderRequest struct {
@@ -17,7 +19,10 @@ type CreateOrderRequest struct {
 func (r *CreateOrderRequest) ToDomain() *models.Order {
 	items := make([]models.ItemOrder, len(r.Items))
 	for i, it := range r.Items {
-		items[i] = models.ItemOrder{ItemID: it.ItemID}
+		items[i] = models.ItemOrder{
+			ItemID:   it.ItemID,
+			Quantity: it.Quantity,
+			Price:    it.Price}
 	}
 	return &models.Order{
 		CustomerEmail:   r.CustomerEmail,
