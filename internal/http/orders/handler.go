@@ -128,8 +128,6 @@ func (h *OrdersHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	api.OKResponse(w, nil)
 }
 
-// ─── mappers ────────────────────────────────────────────────────────────────
-
 func mapToOrderResponse(o *models.Order) outbound.Order {
 	items := make([]outbound.ItemOrder, len(o.Items))
 	for i, it := range o.Items {

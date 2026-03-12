@@ -98,8 +98,6 @@ func (h *BrandsHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	api.OKResponse(w, nil)
 }
 
-// ─── mappers ────────────────────────────────────────────────────────────────
-
 func mapToBrandResponse(b *models.Brand) outbound.Brand {
 	return outbound.Brand{
 		ID:                 b.ID,

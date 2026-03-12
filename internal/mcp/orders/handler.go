@@ -7,6 +7,7 @@ import (
 
 	"github.com/lgutierrez148/acomm/internal/inbound"
 	"github.com/lgutierrez148/acomm/internal/interfaces"
+	internalmcp "github.com/lgutierrez148/acomm/internal/mcp"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -20,6 +21,8 @@ func NewOrdersMCPHandler(repo interfaces.IOrdersRepository) *OrdersMCPHandler {
 }
 
 func (h *OrdersMCPHandler) RegisterTools(srv *server.MCPServer) {
+	createOrderJSONSchema := internalmcp.MustGetToolSchema(internalmcp.CreateOrderSchemaName)
+
 	// get_orders
 	getOrdersTool := mcp.NewTool("get_orders",
 		mcp.WithDescription("Returns all orders"),
@@ -35,8 +38,8 @@ func (h *OrdersMCPHandler) RegisterTools(srv *server.MCPServer) {
 
 	// create_order
 	createOrderTool := mcp.NewTool("create_order",
-		mcp.WithDescription("Creates a new order"),
-		mcp.WithString("order_json", mcp.Required(), mcp.Description("JSON representation of the order")),
+		mcp.WithDescription("Creates a new order. Input payload for order_json must follow this JSON Schema:\n"+createOrderJSONSchema),
+		mcp.WithString("order_json", mcp.Required(), mcp.Description("JSON string payload for the order. Schema:\n"+createOrderJSONSchema)),
 	)
 	srv.AddTool(createOrderTool, h.handleCreateOrder)
 }

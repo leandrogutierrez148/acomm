@@ -10,9 +10,10 @@ import (
 	"github.com/lgutierrez148/acomm/internal/mcp/brands"
 	"github.com/lgutierrez148/acomm/internal/mcp/categories"
 	"github.com/lgutierrez148/acomm/internal/mcp/items"
+	"github.com/lgutierrez148/acomm/internal/mcp/items_specifications"
 	"github.com/lgutierrez148/acomm/internal/mcp/orders"
 	"github.com/lgutierrez148/acomm/internal/mcp/products"
-	"github.com/lgutierrez148/acomm/internal/mcp/specifications"
+	"github.com/lgutierrez148/acomm/internal/mcp/products_specifications"
 	"github.com/lgutierrez148/acomm/internal/repositories"
 )
 
@@ -45,7 +46,8 @@ func main() {
 	brandsRepo := repositories.NewBrandsRepository(db)
 	itemsRepo := repositories.NewItemsRepository(db)
 	ordersRepo := repositories.NewOrdersRepository(db)
-	specsRepo := repositories.NewSpecificationsRepository(db)
+	itemsSpecsRepo := repositories.NewItemsSpecificationsRepository(db)
+	productsSpecsRepo := repositories.NewProductsSpecificationsRepository(db)
 
 	// Initialize handlers
 	productsHandler := products.NewProductsMCPHandler(prodRepo)
@@ -53,7 +55,8 @@ func main() {
 	brandsHandler := brands.NewBrandsMCPHandler(brandsRepo)
 	itemsHandler := items.NewItemsMCPHandler(itemsRepo)
 	ordersHandler := orders.NewOrdersMCPHandler(ordersRepo)
-	specsHandler := specifications.NewSpecificationsMCPHandler(specsRepo)
+	itemsSpecsHandler := items_specifications.NewItemsSpecificationsMCPHandler(itemsSpecsRepo)
+	productsSpecsHandler := products_specifications.NewProductsSpecificationsMCPHandler(productsSpecsRepo)
 
 	mcpSrv := mcp.NewMCPServer(
 		productsHandler,
@@ -61,7 +64,8 @@ func main() {
 		brandsHandler,
 		itemsHandler,
 		ordersHandler,
-		specsHandler,
+		itemsSpecsHandler,
+		productsSpecsHandler,
 	)
 
 	// Since MCP relies on stdio for its protocol, all logging must go to standard error to avoid

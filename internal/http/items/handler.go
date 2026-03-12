@@ -114,8 +114,6 @@ func (h *ItemsHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	api.OKResponse(w, nil)
 }
 
-// ─── mappers ────────────────────────────────────────────────────────────────
-
 func mapToItemResponse(it *models.Item) outbound.Item {
 	return outbound.Item{
 		ID:        it.ID,

@@ -10,20 +10,22 @@ import (
 	"github.com/lgutierrez148/acomm/internal/http/brands"
 	"github.com/lgutierrez148/acomm/internal/http/categories"
 	"github.com/lgutierrez148/acomm/internal/http/items"
+	"github.com/lgutierrez148/acomm/internal/http/items_specifications"
 	"github.com/lgutierrez148/acomm/internal/http/orders"
 	"github.com/lgutierrez148/acomm/internal/http/products"
-	"github.com/lgutierrez148/acomm/internal/http/specifications"
+	"github.com/lgutierrez148/acomm/internal/http/products_specifications"
 )
 
 // HTTPServer represents the HTTP server wrapper.
 type HTTPServer struct {
-	srv      *http.Server
-	products *products.ProductsHandler
-	cats     *categories.CategoriesHandler
-	brands   *brands.BrandsHandler
-	items    *items.ItemsHandler
-	orders   *orders.OrdersHandler
-	specs    *specifications.SpecificationsHandler
+	srv           *http.Server
+	products      *products.ProductsHandler
+	cats          *categories.CategoriesHandler
+	brands        *brands.BrandsHandler
+	items         *items.ItemsHandler
+	orders        *orders.OrdersHandler
+	itemsSpecs    *items_specifications.ItemsSpecificationsHandler
+	productsSpecs *products_specifications.ProductsSpecificationsHandler
 }
 
 // NewHTTPServer initializes a new HTTP server with the required handlers.
@@ -34,7 +36,8 @@ func NewHTTPServer(
 	brandsHandler *brands.BrandsHandler,
 	itemsHandler *items.ItemsHandler,
 	ordersHandler *orders.OrdersHandler,
-	specsHandler *specifications.SpecificationsHandler,
+	itemsSpecsHandler *items_specifications.ItemsSpecificationsHandler,
+	productsSpecsHandler *products_specifications.ProductsSpecificationsHandler,
 ) *HTTPServer {
 	mux := http.NewServeMux()
 
@@ -69,13 +72,21 @@ func NewHTTPServer(
 	mux.HandleFunc("PUT /orders/{id}", ordersHandler.HandleUpdate)
 	mux.HandleFunc("DELETE /orders/{id}", ordersHandler.HandleDelete)
 
-	// Specifications endpoints
-	mux.HandleFunc("GET /specifications", specsHandler.HandleGetAll)
-	mux.HandleFunc("GET /specifications/{id}", specsHandler.HandleGetByID)
-	mux.HandleFunc("GET /specifications/product/{product_id}", specsHandler.HandleGetByProductID)
-	mux.HandleFunc("POST /specifications", specsHandler.HandleCreate)
-	mux.HandleFunc("PUT /specifications/{id}", specsHandler.HandleUpdate)
-	mux.HandleFunc("DELETE /specifications/{id}", specsHandler.HandleDelete)
+	// Products Specifications endpoints
+	mux.HandleFunc("GET /products-specifications", productsSpecsHandler.HandleGetAll)
+	mux.HandleFunc("GET /products-specifications/{id}", productsSpecsHandler.HandleGetByID)
+	mux.HandleFunc("GET /products-specifications/product/{product_id}", productsSpecsHandler.HandleGetByProductID)
+	mux.HandleFunc("POST /products-specifications", productsSpecsHandler.HandleCreate)
+	mux.HandleFunc("PUT /products-specifications/{id}", productsSpecsHandler.HandleUpdate)
+	mux.HandleFunc("DELETE /products-specifications/{id}", productsSpecsHandler.HandleDelete)
+
+	// Items Specifications endpoints
+	mux.HandleFunc("GET /items-specifications", itemsSpecsHandler.HandleGetAll)
+	mux.HandleFunc("GET /items-specifications/{id}", itemsSpecsHandler.HandleGetByID)
+	mux.HandleFunc("GET /items-specifications/item/{item_id}", itemsSpecsHandler.HandleGetByItemID)
+	mux.HandleFunc("POST /items-specifications", itemsSpecsHandler.HandleCreate)
+	mux.HandleFunc("PUT /items-specifications/{id}", itemsSpecsHandler.HandleUpdate)
+	mux.HandleFunc("DELETE /items-specifications/{id}", itemsSpecsHandler.HandleDelete)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf("0.0.0.0:%s", port),
@@ -83,13 +94,14 @@ func NewHTTPServer(
 	}
 
 	return &HTTPServer{
-		srv:      srv,
-		products: productsHandler,
-		cats:     categoriesHandler,
-		brands:   brandsHandler,
-		items:    itemsHandler,
-		orders:   ordersHandler,
-		specs:    specsHandler,
+		srv:           srv,
+		products:      productsHandler,
+		cats:          categoriesHandler,
+		brands:        brandsHandler,
+		items:         itemsHandler,
+		orders:        ordersHandler,
+		itemsSpecs:    itemsSpecsHandler,
+		productsSpecs: productsSpecsHandler,
 	}
 }
 

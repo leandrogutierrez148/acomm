@@ -1,4 +1,4 @@
-package specifications
+package products_specifications
 
 import (
 	"encoding/json"
@@ -12,24 +12,24 @@ import (
 	"github.com/lgutierrez148/acomm/internal/outbound"
 )
 
-type SpecificationsHandler struct {
-	repo interfaces.ISpecificationsRepository
+type ProductsSpecificationsHandler struct {
+	repo interfaces.IProductsSpecificationsRepository
 }
 
-func NewSpecificationsHandler(repo interfaces.ISpecificationsRepository) *SpecificationsHandler {
-	return &SpecificationsHandler{repo: repo}
+func NewProductsSpecificationsHandler(repo interfaces.IProductsSpecificationsRepository) *ProductsSpecificationsHandler {
+	return &ProductsSpecificationsHandler{repo: repo}
 }
 
-func (h *SpecificationsHandler) HandleGetAll(w http.ResponseWriter, r *http.Request) {
+func (h *ProductsSpecificationsHandler) HandleGetAll(w http.ResponseWriter, r *http.Request) {
 	specs, err := h.repo.FindAll()
 	if err != nil {
 		api.ErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	api.OKResponse(w, outbound.GetSpecificationsResponse{Specifications: mapToSpecificationsResponse(specs)})
+	api.OKResponse(w, outbound.GetProductSpecificationsResponse{Specifications: mapToProductSpecificationsResponse(specs)})
 }
 
-func (h *SpecificationsHandler) HandleGetByID(w http.ResponseWriter, r *http.Request) {
+func (h *ProductsSpecificationsHandler) HandleGetByID(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
@@ -42,10 +42,10 @@ func (h *SpecificationsHandler) HandleGetByID(w http.ResponseWriter, r *http.Req
 		api.ErrorResponse(w, http.StatusNotFound, "specification not found")
 		return
 	}
-	api.OKResponse(w, outbound.GetSpecificationResponse{Specification: mapToSpecificationResponse(spec)})
+	api.OKResponse(w, outbound.GetProductSpecificationResponse{Specification: mapToProductSpecificationResponse(spec)})
 }
 
-func (h *SpecificationsHandler) HandleGetByProductID(w http.ResponseWriter, r *http.Request) {
+func (h *ProductsSpecificationsHandler) HandleGetByProductID(w http.ResponseWriter, r *http.Request) {
 	productIDStr := r.PathValue("product_id")
 	productID, err := strconv.ParseUint(productIDStr, 10, 32)
 	if err != nil {
@@ -58,11 +58,11 @@ func (h *SpecificationsHandler) HandleGetByProductID(w http.ResponseWriter, r *h
 		api.ErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	api.OKResponse(w, outbound.GetSpecificationsResponse{Specifications: mapToSpecificationsResponse(specs)})
+	api.OKResponse(w, outbound.GetProductSpecificationsResponse{Specifications: mapToProductSpecificationsResponse(specs)})
 }
 
-func (h *SpecificationsHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
-	var req inbound.CreateSpecificationRequest
+func (h *ProductsSpecificationsHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
+	var req inbound.CreateProductSpecificationRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		api.ErrorResponse(w, http.StatusBadRequest, err.Error())
 		return
@@ -73,10 +73,10 @@ func (h *SpecificationsHandler) HandleCreate(w http.ResponseWriter, r *http.Requ
 		api.ErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	api.OKResponse(w, outbound.CreateSpecificationResponse{Specification: mapToSpecificationResponse(spec)})
+	api.OKResponse(w, outbound.CreateProductSpecificationResponse{Specification: mapToProductSpecificationResponse(spec)})
 }
 
-func (h *SpecificationsHandler) HandleUpdate(w http.ResponseWriter, r *http.Request) {
+func (h *ProductsSpecificationsHandler) HandleUpdate(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
@@ -84,7 +84,7 @@ func (h *SpecificationsHandler) HandleUpdate(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	var req inbound.UpdateSpecificationRequest
+	var req inbound.UpdateProductSpecificationRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		api.ErrorResponse(w, http.StatusBadRequest, err.Error())
 		return
@@ -96,10 +96,10 @@ func (h *SpecificationsHandler) HandleUpdate(w http.ResponseWriter, r *http.Requ
 		api.ErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	api.OKResponse(w, outbound.UpdateSpecificationResponse{Specification: mapToSpecificationResponse(spec)})
+	api.OKResponse(w, outbound.UpdateProductSpecificationResponse{Specification: mapToProductSpecificationResponse(spec)})
 }
 
-func (h *SpecificationsHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
+func (h *ProductsSpecificationsHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
@@ -114,10 +114,8 @@ func (h *SpecificationsHandler) HandleDelete(w http.ResponseWriter, r *http.Requ
 	api.OKResponse(w, nil)
 }
 
-// ─── mappers ────────────────────────────────────────────────────────────────
-
-func mapToSpecificationResponse(s *models.Specification) outbound.Specification {
-	return outbound.Specification{
+func mapToProductSpecificationResponse(s *models.ProductSpecification) outbound.ProductSpecification {
+	return outbound.ProductSpecification{
 		ID:        s.ID,
 		ProductID: s.ProductID,
 		Key:       s.Key,
@@ -127,10 +125,10 @@ func mapToSpecificationResponse(s *models.Specification) outbound.Specification 
 	}
 }
 
-func mapToSpecificationsResponse(specs []models.Specification) []outbound.Specification {
-	resp := make([]outbound.Specification, len(specs))
+func mapToProductSpecificationsResponse(specs []models.ProductSpecification) []outbound.ProductSpecification {
+	resp := make([]outbound.ProductSpecification, len(specs))
 	for i := range specs {
-		resp[i] = mapToSpecificationResponse(&specs[i])
+		resp[i] = mapToProductSpecificationResponse(&specs[i])
 	}
 	return resp
 }

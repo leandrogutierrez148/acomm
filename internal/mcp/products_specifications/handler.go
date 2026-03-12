@@ -1,4 +1,4 @@
-package specifications
+package products_specifications
 
 import (
 	"context"
@@ -11,36 +11,36 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-type SpecificationsMCPHandler struct {
-	repo interfaces.ISpecificationsRepository
+type ProductsSpecificationsMCPHandler struct {
+	repo interfaces.IProductsSpecificationsRepository
 }
 
-func NewSpecificationsMCPHandler(repo interfaces.ISpecificationsRepository) *SpecificationsMCPHandler {
-	return &SpecificationsMCPHandler{repo: repo}
+func NewProductsSpecificationsMCPHandler(repo interfaces.IProductsSpecificationsRepository) *ProductsSpecificationsMCPHandler {
+	return &ProductsSpecificationsMCPHandler{repo: repo}
 }
 
-func (h *SpecificationsMCPHandler) RegisterTools(srv *server.MCPServer) {
-	// get_specifications
-	getSpecificationsTool := mcp.NewTool("get_specifications",
-		mcp.WithDescription("Returns all specifications or specifications filtered by product ID"),
+func (h *ProductsSpecificationsMCPHandler) RegisterTools(srv *server.MCPServer) {
+	// get_product_specifications
+	getSpecsTool := mcp.NewTool("get_product_specifications",
+		mcp.WithDescription("Returns all product specifications or specifications filtered by product ID"),
 		mcp.WithNumber("product_id", mcp.Description("Filter specifications by product ID (optional)")),
 	)
-	srv.AddTool(getSpecificationsTool, h.handleGetSpecifications)
+	srv.AddTool(getSpecsTool, h.handleGetProductSpecifications)
 
-	// create_specification
-	createSpecificationTool := mcp.NewTool("create_specification",
+	// create_product_specification
+	createSpecTool := mcp.NewTool("create_product_specification",
 		mcp.WithDescription("Creates a new specification for a product"),
 		mcp.WithNumber("product_id", mcp.Required(), mcp.Description("Product ID")),
 		mcp.WithString("key", mcp.Required(), mcp.Description("Specification key")),
 		mcp.WithString("value", mcp.Required(), mcp.Description("Specification value")),
 	)
-	srv.AddTool(createSpecificationTool, h.handleCreateSpecification)
+	srv.AddTool(createSpecTool, h.handleCreateProductSpecification)
 }
 
-func (h *SpecificationsMCPHandler) handleGetSpecifications(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (h *ProductsSpecificationsMCPHandler) handleGetProductSpecifications(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	productID := request.GetInt("product_id", 0)
 
-	var specs []models.Specification
+	var specs []models.ProductSpecification
 	var err error
 
 	if productID > 0 {
@@ -61,7 +61,7 @@ func (h *SpecificationsMCPHandler) handleGetSpecifications(ctx context.Context, 
 	return mcp.NewToolResultText(string(responseJSON)), nil
 }
 
-func (h *SpecificationsMCPHandler) handleCreateSpecification(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+func (h *ProductsSpecificationsMCPHandler) handleCreateProductSpecification(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	productID := request.GetInt("product_id", 0)
 	key := request.GetString("key", "")
 	value := request.GetString("value", "")
@@ -70,7 +70,7 @@ func (h *SpecificationsMCPHandler) handleCreateSpecification(ctx context.Context
 		return mcp.NewToolResultError("product_id, key, and value are required"), nil
 	}
 
-	spec := &models.Specification{
+	spec := &models.ProductSpecification{
 		ProductID: uint(productID),
 		Key:       key,
 		Value:     value,

@@ -13,9 +13,10 @@ import (
 	"github.com/lgutierrez148/acomm/internal/http/brands"
 	"github.com/lgutierrez148/acomm/internal/http/categories"
 	"github.com/lgutierrez148/acomm/internal/http/items"
+	"github.com/lgutierrez148/acomm/internal/http/items_specifications"
 	"github.com/lgutierrez148/acomm/internal/http/orders"
 	"github.com/lgutierrez148/acomm/internal/http/products"
-	"github.com/lgutierrez148/acomm/internal/http/specifications"
+	"github.com/lgutierrez148/acomm/internal/http/products_specifications"
 	"github.com/lgutierrez148/acomm/internal/repositories"
 )
 
@@ -51,7 +52,8 @@ func main() {
 	brandsRepo := repositories.NewBrandsRepository(db)
 	itemsRepo := repositories.NewItemsRepository(db)
 	ordersRepo := repositories.NewOrdersRepository(db)
-	specsRepo := repositories.NewSpecificationsRepository(db)
+	itemsSpecsRepo := repositories.NewItemsSpecificationsRepository(db)
+	productsSpecsRepo := repositories.NewProductsSpecificationsRepository(db)
 
 	// Initialize HTTP handlers
 	prodsHandler := products.NewProductsHandler(prodRepo)
@@ -59,7 +61,8 @@ func main() {
 	brandsHandler := brands.NewBrandsHandler(brandsRepo)
 	itemsHandler := items.NewItemsHandler(itemsRepo)
 	ordersHandler := orders.NewOrdersHandler(ordersRepo)
-	specsHandler := specifications.NewSpecificationsHandler(specsRepo)
+	itemsSpecsHandler := items_specifications.NewItemsSpecificationsHandler(itemsSpecsRepo)
+	productsSpecsHandler := products_specifications.NewProductsSpecificationsHandler(productsSpecsRepo)
 
 	// Initialize HTTP Server
 	port := os.Getenv("HTTP_PORT")
@@ -67,7 +70,7 @@ func main() {
 		port = "8484" // Default port if not in .env
 	}
 
-	httpSrv := http_server.NewHTTPServer(port, prodsHandler, catsHandler, brandsHandler, itemsHandler, ordersHandler, specsHandler)
+	httpSrv := http_server.NewHTTPServer(port, prodsHandler, catsHandler, brandsHandler, itemsHandler, ordersHandler, itemsSpecsHandler, productsSpecsHandler)
 
 	// Start the server blocking until context is done
 	if err := httpSrv.Start(ctx); err != nil {

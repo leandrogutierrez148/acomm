@@ -2,15 +2,15 @@ package models
 
 import "time"
 
-type Specification struct {
+type ItemSpecification struct {
 	ID        uint      `json:"id" gorm:"primaryKey"`
-	ProductID uint      `json:"product_id" gorm:"not null;index"`
+	ItemID    uint      `json:"item_id" gorm:"not null;index"`
 	Key       string    `json:"key" gorm:"not null"`
 	Value     string    `json:"value" gorm:"not null"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (Specification) TableName() string {
-	return "specifications"
+func (ItemSpecification) TableName() string {
+	return "item_specifications"
 }

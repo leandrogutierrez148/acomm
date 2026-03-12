@@ -2,28 +2,28 @@ package inbound
 
 import "github.com/lgutierrez148/acomm/internal/models"
 
-type CreateSpecificationRequest struct {
+type CreateProductSpecificationRequest struct {
 	ProductID uint   `json:"product_id"`
 	Key       string `json:"key"`
 	Value     string `json:"value"`
 }
 
-func (r *CreateSpecificationRequest) ToDomain() *models.Specification {
-	return &models.Specification{
+func (r *CreateProductSpecificationRequest) ToDomain() *models.ProductSpecification {
+	return &models.ProductSpecification{
 		ProductID: r.ProductID,
 		Key:       r.Key,
 		Value:     r.Value,
 	}
 }
 
-type UpdateSpecificationRequest struct {
+type UpdateProductSpecificationRequest struct {
 	ProductID uint   `json:"product_id"`
 	Key       string `json:"key"`
 	Value     string `json:"value"`
 }
 
-func (r *UpdateSpecificationRequest) ToDomain() *models.Specification {
-	return &models.Specification{
+func (r *UpdateProductSpecificationRequest) ToDomain() *models.ProductSpecification {
+	return &models.ProductSpecification{
 		ProductID: r.ProductID,
 		Key:       r.Key,
 		Value:     r.Value,
