@@ -42,6 +42,14 @@ func (h *ProductsMCPHandler) RegisterTools(srv *server.MCPServer) {
 		mcp.WithString("code", mcp.Required(), mcp.Description("Unique code of the product")),
 	)
 	srv.AddTool(getProductByCodeTool, h.handleGetProductByCode)
+
+	// 3. create_product
+	createProductTool := mcp.NewTool("create_product",
+		mcp.WithDescription("Creates a new product in the catalog. Requires category_id and optionally brand_id."),
+		mcp.WithNumber("category_id", mcp.Required(), mcp.Description("ID of the category for the new product")),
+		mcp.WithNumber("brand_id", mcp.Description("Optional ID of the brand for the new product")),
+	)
+	srv.AddTool(createProductTool, h.handleCreateProduct)
 }
 
 func (h *ProductsMCPHandler) handleSearchProducts(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
@@ -96,6 +104,32 @@ func (h *ProductsMCPHandler) handleGetProductByCode(ctx context.Context, request
 	}
 
 	resp := h.mapToProductResponse(prod)
+	responseJSON, err := json.MarshalIndent(resp, "", "  ")
+	if err != nil {
+		return mcp.NewToolResultError(fmt.Sprintf("Failed to encode response: %v", err)), nil
+	}
+
+	return mcp.NewToolResultText(string(responseJSON)), nil
+}
+
+func (h *ProductsMCPHandler) handleCreateProduct(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	categoryID := request.GetInt("category_id", 0)
+	if categoryID <= 0 {
+		return mcp.NewToolResultError("category_id is required and must be greater than 0"), nil
+	}
+
+	brandID := request.GetInt("brand_id", 0) // default 0 if not provided
+
+	newProd := &models.Product{
+		CategoryID: uint(categoryID),
+		BrandID:    uint(brandID),
+	}
+
+	if err := h.prodRepo.CreateProduct(newProd); err != nil {
+		return mcp.NewToolResultError(fmt.Sprintf("Failed to create product: %v", err)), nil
+	}
+
+	resp := h.mapToProductResponse(newProd)
 	responseJSON, err := json.MarshalIndent(resp, "", "  ")
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("Failed to encode response: %v", err)), nil

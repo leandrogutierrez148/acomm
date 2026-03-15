@@ -7,7 +7,6 @@ type Item struct {
 	ProductID uint      `json:"product_id" gorm:"not null;index"`
 	SKU       string    `json:"sku" gorm:"uniqueIndex;not null"`
 	Price     float64   `json:"price" gorm:"not null"`
-	Stock     int       `json:"stock" gorm:"not null;default:0"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }

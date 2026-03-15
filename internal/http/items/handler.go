@@ -120,7 +120,6 @@ func mapToItemResponse(it *models.Item) outbound.Item {
 		ProductID: it.ProductID,
 		SKU:       it.SKU,
 		Price:     it.Price,
-		Stock:     it.Stock,
 		CreatedAt: it.CreatedAt,
 		UpdatedAt: it.UpdatedAt,
 	}

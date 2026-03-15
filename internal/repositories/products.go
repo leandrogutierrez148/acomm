@@ -100,3 +100,7 @@ func (r *ProductsRepository) GetProductByCode(code string) (*models.Product, err
 	}
 	return r.GetProductByID(uint(id))
 }
+
+func (r *ProductsRepository) CreateProduct(product *models.Product) error {
+	return r.db.Model(&models.Product{}).Create(product).GetError()
+}

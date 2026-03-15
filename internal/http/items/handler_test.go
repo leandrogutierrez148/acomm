@@ -106,7 +106,6 @@ func TestHandleCreate(t *testing.T) {
 			ProductID: 1,
 			SKU:       "SKU1",
 			Price:     100,
-			Stock:     10,
 		}
 
 		bodyBytes, _ := json.Marshal(reqBody)

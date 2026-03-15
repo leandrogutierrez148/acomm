@@ -22,21 +22,21 @@ func NewItemsMCPHandler(repo interfaces.IItemsRepository) *ItemsMCPHandler {
 func (h *ItemsMCPHandler) RegisterTools(srv *server.MCPServer) {
 	// get_items
 	getItemsTool := mcp.NewTool("get_items",
-		mcp.WithDescription("Returns all items or items filtered by product ID"),
+		mcp.WithDescription("Returns all items or items filtered by product ID."),
 		mcp.WithNumber("product_id", mcp.Description("Filter items by product ID (optional)")),
 	)
 	srv.AddTool(getItemsTool, h.handleGetItems)
 
 	// get_item_by_id
 	getItemByIDTool := mcp.NewTool("get_item_by_id",
-		mcp.WithDescription("Returns a specific item by its ID"),
+		mcp.WithDescription("Returns a specific item by its ID."),
 		mcp.WithNumber("id", mcp.Required(), mcp.Description("Item ID")),
 	)
 	srv.AddTool(getItemByIDTool, h.handleGetItemByID)
 
 	// create_item
 	createItemTool := mcp.NewTool("create_item",
-		mcp.WithDescription("Creates a new item"),
+		mcp.WithDescription("Creates a new item."),
 		mcp.WithNumber("product_id", mcp.Required(), mcp.Description("Product ID")),
 		mcp.WithString("sku", mcp.Required(), mcp.Description("SKU")),
 		mcp.WithNumber("price", mcp.Required(), mcp.Description("Price")),
@@ -92,7 +92,6 @@ func (h *ItemsMCPHandler) handleCreateItem(ctx context.Context, request mcp.Call
 	productID := request.GetInt("product_id", 0)
 	sku := request.GetString("sku", "")
 	price := request.GetFloat("price", 0)
-	stock := request.GetInt("stock", 0)
 
 	if productID == 0 || sku == "" || price <= 0 {
 		return mcp.NewToolResultError("product_id, sku, and price are required"), nil
@@ -102,7 +101,6 @@ func (h *ItemsMCPHandler) handleCreateItem(ctx context.Context, request mcp.Call
 		ProductID: uint(productID),
 		SKU:       sku,
 		Price:     price,
-		Stock:     stock,
 	}
 
 	if err := h.repo.Create(item); err != nil {

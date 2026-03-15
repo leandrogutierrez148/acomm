@@ -22,20 +22,20 @@ func NewBrandsMCPHandler(repo interfaces.IBrandsRepository) *BrandsMCPHandler {
 func (h *BrandsMCPHandler) RegisterTools(srv *server.MCPServer) {
 	// get_brands
 	getBrandsTool := mcp.NewTool("get_brands",
-		mcp.WithDescription("Returns all brands"),
+		mcp.WithDescription("Returns all brands."),
 	)
 	srv.AddTool(getBrandsTool, h.handleGetBrands)
 
 	// get_brand_by_id
 	getBrandByIDTool := mcp.NewTool("get_brand_by_id",
-		mcp.WithDescription("Returns a specific brand by its ID"),
+		mcp.WithDescription("Returns a specific brand by its ID."),
 		mcp.WithNumber("id", mcp.Required(), mcp.Description("Brand ID")),
 	)
 	srv.AddTool(getBrandByIDTool, h.handleGetBrandByID)
 
 	// create_brand
 	createBrandTool := mcp.NewTool("create_brand",
-		mcp.WithDescription("Creates a new brand"),
+		mcp.WithDescription("Creates a new brand."),
 		mcp.WithString("name", mcp.Required(), mcp.Description("Brand name")),
 		mcp.WithString("description", mcp.Description("Brand description (optional)")),
 	)

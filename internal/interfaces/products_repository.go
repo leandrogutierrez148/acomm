@@ -11,4 +11,5 @@ type IProductsRepository interface {
 	SearchProductsPaginated(offset, limit int, category string, maxPrice decimal.Decimal) ([]models.Product, int64, error)
 	GetProductByID(id uint) (*models.Product, error)
 	GetProductByCode(code string) (*models.Product, error)
+	CreateProduct(product *models.Product) error
 }

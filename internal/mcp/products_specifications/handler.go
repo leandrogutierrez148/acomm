@@ -22,14 +22,14 @@ func NewProductsSpecificationsMCPHandler(repo interfaces.IProductsSpecifications
 func (h *ProductsSpecificationsMCPHandler) RegisterTools(srv *server.MCPServer) {
 	// get_product_specifications
 	getSpecsTool := mcp.NewTool("get_product_specifications",
-		mcp.WithDescription("Returns all product specifications or specifications filtered by product ID"),
+		mcp.WithDescription("Returns all product specifications or specifications filtered by product ID."),
 		mcp.WithNumber("product_id", mcp.Description("Filter specifications by product ID (optional)")),
 	)
 	srv.AddTool(getSpecsTool, h.handleGetProductSpecifications)
 
 	// create_product_specification
 	createSpecTool := mcp.NewTool("create_product_specification",
-		mcp.WithDescription("Creates a new specification for a product"),
+		mcp.WithDescription("Creates a new specification for a product."),
 		mcp.WithNumber("product_id", mcp.Required(), mcp.Description("Product ID")),
 		mcp.WithString("key", mcp.Required(), mcp.Description("Specification key")),
 		mcp.WithString("value", mcp.Required(), mcp.Description("Specification value")),
