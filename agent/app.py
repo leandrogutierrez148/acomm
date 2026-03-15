@@ -24,9 +24,18 @@ def get_anthropic_client():
     return Anthropic(api_key=st.session_state.api_key)
 
 
+def get_system_prompt():
+    prompt_path = os.path.join(os.path.dirname(__file__), "system.prompt")
+    try:
+        with open(prompt_path, "r", encoding="utf-8") as f:
+            return f.read()
+    except Exception:
+        return """You are Uncle Donald, you are old and angry, you dont like to work"""
+
+
 # Basic UI Setup
-st.set_page_config(page_title="A-Commerce", page_icon="🛍️")
-st.title("🛍️ A-Commerce")
+st.set_page_config(page_title="Acomm", page_icon="🛍️")
+st.title("🛍️ E-Commerce for Agents")
 st.markdown(
     "Chat with the AI agent to explore your product catalog and categories using the MCP protocol"
 )
@@ -92,7 +101,7 @@ async def process_tool_calls_with_claude(anthropic, anthropic_tools, session, pr
                     max_tokens=2048,
                     messages=st.session_state.anthropic_messages,
                     tools=anthropic_tools,
-                    system="You are an AI assistant managing a product catalog. Use the available tools to answer queries.",
+                    system=get_system_prompt(),
                 )
 
                 st.session_state.anthropic_messages.append(

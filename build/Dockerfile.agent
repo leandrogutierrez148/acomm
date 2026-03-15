@@ -2,12 +2,13 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy source code and requirements.txt
-COPY ./agent/app.py .
+# Copy requirements and install dependencies
 COPY ./agent/requirements.txt .
-
-# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy source code
+COPY ./agent/app.py .
+COPY ./agent/system.prompt .
 
 # Expose Streamlit port
 EXPOSE 8501

@@ -48,6 +48,7 @@ services:
       - "127.0.0.1:8501:8501"
     environment:
       MCP_SERVER_URL: "http://host.docker.internal:8080/sse"
-    # To avoid hardcoding, pass ANTHROPIC_API_KEY if present in environment, or user inputs it inside Streamlit.
+    volumes:
+      - ./agent:/app
     depends_on:
       - mcp-server
