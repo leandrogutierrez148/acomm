@@ -40,7 +40,6 @@ func (h *ItemsMCPHandler) RegisterTools(srv *server.MCPServer) {
 		mcp.WithNumber("product_id", mcp.Required(), mcp.Description("Product ID")),
 		mcp.WithString("sku", mcp.Required(), mcp.Description("SKU")),
 		mcp.WithNumber("price", mcp.Required(), mcp.Description("Price")),
-		mcp.WithNumber("stock", mcp.Description("Stock quantity (default 0)")),
 	)
 	srv.AddTool(createItemTool, h.handleCreateItem)
 }

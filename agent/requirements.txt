@@ -3,3 +3,4 @@ anthropic>=0.30.0
 mcp>=0.1.0-alpha.5
 httpx>=0.27.0
 python-dotenv>=1.0.1
+streamlit-carousel-uui>=0.1.4
