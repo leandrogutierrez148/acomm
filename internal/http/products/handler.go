@@ -82,7 +82,8 @@ func mapToProductsResponse(products []models.Product) []outbound.Product {
 		}
 
 		resp[i] = outbound.Product{
-			Code:     strconv.FormatUint(uint64(p.ID), 10),
+			Code:     p.RefID,
+			Name:     p.Name,
 			Price:    price,
 			Category: p.Category.Name,
 		}
@@ -107,7 +108,8 @@ func mapToProductResponse(prod *models.Product) outbound.Product {
 	}
 
 	return outbound.Product{
-		Code:     strconv.FormatUint(uint64(prod.ID), 10),
+		Code:     prod.RefID,
+		Name:     prod.Name,
 		Price:    price,
 		Category: prod.Category.Name,
 		Variants: vars,

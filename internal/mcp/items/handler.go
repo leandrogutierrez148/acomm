@@ -40,6 +40,7 @@ func (h *ItemsMCPHandler) RegisterTools(srv *server.MCPServer) {
 		mcp.WithNumber("product_id", mcp.Required(), mcp.Description("Product ID")),
 		mcp.WithString("sku", mcp.Required(), mcp.Description("SKU")),
 		mcp.WithNumber("price", mcp.Required(), mcp.Description("Price")),
+		mcp.WithString("name", mcp.Description("Name of the item (optional)")),
 	)
 	srv.AddTool(createItemTool, h.handleCreateItem)
 }
@@ -91,6 +92,7 @@ func (h *ItemsMCPHandler) handleCreateItem(ctx context.Context, request mcp.Call
 	productID := request.GetInt("product_id", 0)
 	sku := request.GetString("sku", "")
 	price := request.GetFloat("price", 0)
+	name := request.GetString("name", "")
 
 	if productID == 0 || sku == "" || price <= 0 {
 		return mcp.NewToolResultError("product_id, sku, and price are required"), nil
@@ -100,6 +102,7 @@ func (h *ItemsMCPHandler) handleCreateItem(ctx context.Context, request mcp.Call
 		ProductID: uint(productID),
 		SKU:       sku,
 		Price:     price,
+		Name:      name,
 	}
 
 	if err := h.repo.Create(item); err != nil {

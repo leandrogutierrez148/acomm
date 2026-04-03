@@ -9,6 +9,7 @@ import (
 	"github.com/lgutierrez148/acomm/internal/mcp"
 	"github.com/lgutierrez148/acomm/internal/mcp/brands"
 	"github.com/lgutierrez148/acomm/internal/mcp/categories"
+	"github.com/lgutierrez148/acomm/internal/mcp/item_images"
 	"github.com/lgutierrez148/acomm/internal/mcp/items"
 	"github.com/lgutierrez148/acomm/internal/mcp/items_specifications"
 	"github.com/lgutierrez148/acomm/internal/mcp/orders"
@@ -45,6 +46,7 @@ func main() {
 	catRepo := repositories.NewCategoriesRepository(db)
 	brandsRepo := repositories.NewBrandsRepository(db)
 	itemsRepo := repositories.NewItemsRepository(db)
+	itemImagesRepo := repositories.NewItemImagesRepository(db)
 	ordersRepo := repositories.NewOrdersRepository(db)
 	itemsSpecsRepo := repositories.NewItemsSpecificationsRepository(db)
 	productsSpecsRepo := repositories.NewProductsSpecificationsRepository(db)
@@ -54,6 +56,7 @@ func main() {
 	categoriesHandler := categories.NewCategoriesMCPHandler(catRepo)
 	brandsHandler := brands.NewBrandsMCPHandler(brandsRepo)
 	itemsHandler := items.NewItemsMCPHandler(itemsRepo)
+	itemImagesHandler := item_images.NewItemImagesMCPHandler(itemImagesRepo)
 	ordersHandler := orders.NewOrdersMCPHandler(ordersRepo)
 	itemsSpecsHandler := items_specifications.NewItemsSpecificationsMCPHandler(itemsSpecsRepo)
 	productsSpecsHandler := products_specifications.NewProductsSpecificationsMCPHandler(productsSpecsRepo)
@@ -63,6 +66,7 @@ func main() {
 		categoriesHandler,
 		brandsHandler,
 		itemsHandler,
+		itemImagesHandler,
 		ordersHandler,
 		itemsSpecsHandler,
 		productsSpecsHandler,

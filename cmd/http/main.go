@@ -12,6 +12,7 @@ import (
 	http_server "github.com/lgutierrez148/acomm/internal/http"
 	"github.com/lgutierrez148/acomm/internal/http/brands"
 	"github.com/lgutierrez148/acomm/internal/http/categories"
+	"github.com/lgutierrez148/acomm/internal/http/item_images"
 	"github.com/lgutierrez148/acomm/internal/http/items"
 	"github.com/lgutierrez148/acomm/internal/http/items_specifications"
 	"github.com/lgutierrez148/acomm/internal/http/orders"
@@ -51,6 +52,7 @@ func main() {
 	catRepo := repositories.NewCategoriesRepository(db)
 	brandsRepo := repositories.NewBrandsRepository(db)
 	itemsRepo := repositories.NewItemsRepository(db)
+	itemImagesRepo := repositories.NewItemImagesRepository(db)
 	ordersRepo := repositories.NewOrdersRepository(db)
 	itemsSpecsRepo := repositories.NewItemsSpecificationsRepository(db)
 	productsSpecsRepo := repositories.NewProductsSpecificationsRepository(db)
@@ -60,6 +62,7 @@ func main() {
 	catsHandler := categories.NewCategoriesHandler(catRepo)
 	brandsHandler := brands.NewBrandsHandler(brandsRepo)
 	itemsHandler := items.NewItemsHandler(itemsRepo)
+	itemImagesHandler := item_images.NewItemImagesHandler(itemImagesRepo)
 	ordersHandler := orders.NewOrdersHandler(ordersRepo)
 	itemsSpecsHandler := items_specifications.NewItemsSpecificationsHandler(itemsSpecsRepo)
 	productsSpecsHandler := products_specifications.NewProductsSpecificationsHandler(productsSpecsRepo)
@@ -70,7 +73,7 @@ func main() {
 		port = "8484" // Default port if not in .env
 	}
 
-	httpSrv := http_server.NewHTTPServer(port, prodsHandler, catsHandler, brandsHandler, itemsHandler, ordersHandler, itemsSpecsHandler, productsSpecsHandler)
+	httpSrv := http_server.NewHTTPServer(port, prodsHandler, catsHandler, brandsHandler, itemsHandler, itemImagesHandler, ordersHandler, itemsSpecsHandler, productsSpecsHandler)
 
 	// Start the server blocking until context is done
 	if err := httpSrv.Start(ctx); err != nil {

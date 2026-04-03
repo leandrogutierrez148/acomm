@@ -40,13 +40,6 @@ def get_system_prompt():
 # Product rendering constants
 PRODUCT_TOOLS = {"search_products", "get_product_by_code", "create_product"}
 
-PLACEHOLDER_IMAGES = [
-    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80",
-    "https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=600&q=80",
-    "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&q=80",
-    "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&q=80",
-]
-
 
 def extract_products_from_result(tool_name: str, content_str: str) -> list[dict]:
     """Deserialise a tool result payload into a list of product dicts."""
@@ -87,19 +80,23 @@ def _render_single_card(product: dict) -> None:
     category = product.get("category", "Uncategorized")
     price = product.get("price", 0.0)
     variants = product.get("variants") or []
+    name = product.get("name", "Unknown Product")
+
+    images = product.get("images") or []
+    if not images:
+        for v in variants:
+            images.extend(v.get("images") or [])
 
     with st.container(border=True):
-        slides = [
-            dict(title="", text="", image=url, interval=3000)
-            for url in PLACEHOLDER_IMAGES
-        ]
+        slides = [dict(title="", text="", image=url, interval=3000) for url in images]
         uui_carousel(
             items=slides,
             variant="md",
             key=f"carousel_{code}_{random.randint(0, 999999)}",
         )
 
-        st.markdown(f"**{category}**")
+        st.markdown(f"**{name}**")
+        st.caption(f"{category}")
         st.caption(f"Code: `{code}`")
         st.markdown(
             f"<span style='font-size:1.4rem;font-weight:700'>${price:,.2f}</span>",

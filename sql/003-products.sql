@@ -1,7 +1,26 @@
 CREATE TABLE IF NOT EXISTS products (
     id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL DEFAULT '',
+    department_id INTEGER,
     category_id INTEGER REFERENCES product_categories(id) ON DELETE CASCADE,
-    brand_id INTEGER REFERENCES brands(id) ON DELETE SET NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
+    brand_id INTEGER REFERENCES brands(id) ON DELETE
+    SET NULL,
+        link_id VARCHAR(255),
+        ref_id VARCHAR(255),
+        is_visible BOOLEAN DEFAULT true,
+        description TEXT,
+        description_short TEXT,
+        release_date TIMESTAMP,
+        keywords TEXT,
+        title VARCHAR(255),
+        is_active BOOLEAN DEFAULT true,
+        tax_code VARCHAR(255),
+        meta_tag_description TEXT,
+        supplier_id INTEGER,
+        show_without_stock BOOLEAN DEFAULT false,
+        ad_words_remarketing_code VARCHAR(255),
+        lomadee_campaign_code VARCHAR(255),
+        score INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
 );

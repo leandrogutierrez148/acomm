@@ -21,7 +21,7 @@ func NewProductsRepository(db interfaces.IDatabase) *ProductsRepository {
 
 func (r *ProductsRepository) GetAllProducts() ([]models.Product, error) {
 	var products []models.Product
-	if err := r.db.Preload("Category").Preload("Items").Preload("Brand").Find(&products).GetError(); err != nil {
+	if err := r.db.Preload("Category").Preload("Items").Preload("Items.Images").Preload("Brand").Find(&products).GetError(); err != nil {
 		return nil, err
 	}
 	return products, nil
@@ -30,7 +30,7 @@ func (r *ProductsRepository) GetAllProducts() ([]models.Product, error) {
 func (r *ProductsRepository) GetProductsPaginated(offset, limit int) ([]models.Product, int64, error) {
 	var products []models.Product
 
-	if err := r.db.Preload("Category").Preload("Items").Preload("Brand").Offset(offset).Limit(limit).Find(&products).GetError(); err != nil {
+	if err := r.db.Preload("Category").Preload("Items").Preload("Items.Images").Preload("Brand").Offset(offset).Limit(limit).Find(&products).GetError(); err != nil {
 		return nil, 0, err
 	}
 
@@ -46,6 +46,7 @@ func (r *ProductsRepository) SearchProductsPaginated(offset, limit int, category
 	query := r.db.Model(&models.Product{}).
 		Preload("Category").
 		Preload("Items").
+		Preload("Items.Images").
 		Preload("Brand").
 		Joins("JOIN product_categories ON product_categories.id = products.category_id")
 
@@ -84,7 +85,7 @@ func (r *ProductsRepository) SearchProductsPaginated(offset, limit int, category
 
 func (r *ProductsRepository) GetProductByID(id uint) (*models.Product, error) {
 	var product models.Product
-	if err := r.db.Preload("Category").Preload("Items").Preload("Brand").Where("products.id = ?", id).First(&product).GetError(); err != nil {
+	if err := r.db.Preload("Category").Preload("Items").Preload("Items.Images").Preload("Brand").Where("products.id = ?", id).First(&product).GetError(); err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
 		}

@@ -45,7 +45,8 @@ func (h *ProductsMCPHandler) RegisterTools(srv *server.MCPServer) {
 
 	// 3. create_product
 	createProductTool := mcp.NewTool("create_product",
-		mcp.WithDescription("Creates a new product in the catalog. Requires category_id and optionally brand_id."),
+		mcp.WithDescription("Creates a new product in the catalog. Requires name, category_id and optionally brand_id."),
+		mcp.WithString("name", mcp.Required(), mcp.Description("Name of the new product")),
 		mcp.WithNumber("category_id", mcp.Required(), mcp.Description("ID of the category for the new product")),
 		mcp.WithNumber("brand_id", mcp.Description("Optional ID of the brand for the new product")),
 	)
@@ -113,6 +114,11 @@ func (h *ProductsMCPHandler) handleGetProductByCode(ctx context.Context, request
 }
 
 func (h *ProductsMCPHandler) handleCreateProduct(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	name, err := request.RequireString("name")
+	if err != nil || name == "" {
+		return mcp.NewToolResultError("name is required"), nil
+	}
+
 	categoryID := request.GetInt("category_id", 0)
 	if categoryID <= 0 {
 		return mcp.NewToolResultError("category_id is required and must be greater than 0"), nil
@@ -121,6 +127,7 @@ func (h *ProductsMCPHandler) handleCreateProduct(ctx context.Context, request mc
 	brandID := request.GetInt("brand_id", 0) // default 0 if not provided
 
 	newProd := &models.Product{
+		Name:       name,
 		CategoryID: uint(categoryID),
 		BrandID:    uint(brandID),
 	}
@@ -143,15 +150,23 @@ func (h *ProductsMCPHandler) handleCreateProduct(ctx context.Context, request mc
 func (h *ProductsMCPHandler) mapToProductsResponse(products []models.Product) []outbound.Product {
 	resp := make([]outbound.Product, len(products))
 	for i, p := range products {
+		var images []string
 		price := 0.0
+
 		if len(p.Items) > 0 {
 			price = p.Items[0].Price
+			// show images of the first item
+			for _, img := range p.Items[0].Images {
+				images = append(images, img.Url)
+			}
 		}
 
 		resp[i] = outbound.Product{
-			Code:     fmt.Sprintf("%d", p.ID),
+			Code:     p.RefID,
+			Name:     p.Name,
 			Price:    price,
 			Category: p.Category.Name,
+			Images:   images,
 		}
 	}
 	return resp
@@ -159,11 +174,20 @@ func (h *ProductsMCPHandler) mapToProductsResponse(products []models.Product) []
 
 func (h *ProductsMCPHandler) mapToProductResponse(prod *models.Product) outbound.Product {
 	vars := make([]outbound.Variant, len(prod.Items))
+	var allImages []string
+
 	for i, v := range prod.Items {
+		var varImages []string
+		for _, img := range v.Images {
+			varImages = append(varImages, img.Url)
+			allImages = append(allImages, img.Url)
+		}
+
 		vars[i] = outbound.Variant{
-			Name:  v.SKU,
-			SKU:   v.SKU,
-			Price: v.Price,
+			Name:   v.SKU,
+			SKU:    v.SKU,
+			Price:  v.Price,
+			Images: varImages,
 		}
 	}
 
@@ -173,10 +197,12 @@ func (h *ProductsMCPHandler) mapToProductResponse(prod *models.Product) outbound
 	}
 
 	resp := outbound.Product{
-		Code:     fmt.Sprintf("%d", prod.ID),
+		Code:     prod.RefID,
+		Name:     prod.Name,
 		Price:    price,
 		Category: prod.Category.Name,
 		Variants: vars,
+		Images:   allImages,
 	}
 	return resp
 }

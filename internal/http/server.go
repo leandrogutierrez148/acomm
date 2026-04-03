@@ -9,6 +9,7 @@ import (
 
 	"github.com/lgutierrez148/acomm/internal/http/brands"
 	"github.com/lgutierrez148/acomm/internal/http/categories"
+	"github.com/lgutierrez148/acomm/internal/http/item_images"
 	"github.com/lgutierrez148/acomm/internal/http/items"
 	"github.com/lgutierrez148/acomm/internal/http/items_specifications"
 	"github.com/lgutierrez148/acomm/internal/http/orders"
@@ -23,6 +24,7 @@ type HTTPServer struct {
 	cats          *categories.CategoriesHandler
 	brands        *brands.BrandsHandler
 	items         *items.ItemsHandler
+	itemImages    *item_images.ItemImagesHandler
 	orders        *orders.OrdersHandler
 	itemsSpecs    *items_specifications.ItemsSpecificationsHandler
 	productsSpecs *products_specifications.ProductsSpecificationsHandler
@@ -35,6 +37,7 @@ func NewHTTPServer(
 	categoriesHandler *categories.CategoriesHandler,
 	brandsHandler *brands.BrandsHandler,
 	itemsHandler *items.ItemsHandler,
+	itemImagesHandler *item_images.ItemImagesHandler,
 	ordersHandler *orders.OrdersHandler,
 	itemsSpecsHandler *items_specifications.ItemsSpecificationsHandler,
 	productsSpecsHandler *products_specifications.ProductsSpecificationsHandler,
@@ -88,6 +91,13 @@ func NewHTTPServer(
 	mux.HandleFunc("PUT /items-specifications/{id}", itemsSpecsHandler.HandleUpdate)
 	mux.HandleFunc("DELETE /items-specifications/{id}", itemsSpecsHandler.HandleDelete)
 
+	// Item Images endpoints
+	mux.HandleFunc("GET /item-images/item/{item_id}", itemImagesHandler.HandleGetByItemID)
+	mux.HandleFunc("GET /item-images/{id}", itemImagesHandler.HandleGetByID)
+	mux.HandleFunc("POST /item-images/item/{item_id}", itemImagesHandler.HandleCreate)
+	mux.HandleFunc("PUT /item-images/{id}", itemImagesHandler.HandleUpdate)
+	mux.HandleFunc("DELETE /item-images/{id}", itemImagesHandler.HandleDelete)
+
 	srv := &http.Server{
 		Addr:    fmt.Sprintf("0.0.0.0:%s", port),
 		Handler: mux,
@@ -99,6 +109,7 @@ func NewHTTPServer(
 		cats:          categoriesHandler,
 		brands:        brandsHandler,
 		items:         itemsHandler,
+		itemImages:    itemImagesHandler,
 		orders:        ordersHandler,
 		itemsSpecs:    itemsSpecsHandler,
 		productsSpecs: productsSpecsHandler,
