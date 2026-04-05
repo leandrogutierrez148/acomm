@@ -53,7 +53,7 @@ husky install
 You can use the provided Makefile to manage the environment:
 
 - `make tidy`: Will install all dependencies.
-- `make docker-up`: Will start the required database and infrastructure services via Docker Compose.
+- `make up`: Will start the required database and infrastructure services via Docker Compose.
 - `make test`: Will run the unit and integration test suites.
 - `make run`: Will start the HTTP application.
-- `make docker-down`: Will stop the Docker containers.
+- `make down`: Will stop the Docker containers.
