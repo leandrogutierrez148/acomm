@@ -35,6 +35,15 @@ The project is structured following clean architecture and bounded contexts:
 
 ## Setup & Tools
 
+Make sure you have `docker` installed and running.
+
+```bash
+make up
+```
+
+Visit: http://localhost:8501/
+
+
 ### Development Dependencies
 Ensure you have Go and Docker installed before proceeding.
 - [`mockery`](https://vektra.github.io/mockery/latest/) – used to generate interface mocks for testing.
