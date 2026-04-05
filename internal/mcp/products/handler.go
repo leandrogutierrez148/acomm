@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/lgutierrez148/acomm/internal/interfaces"
-	"github.com/lgutierrez148/acomm/internal/models"
-	"github.com/lgutierrez148/acomm/internal/outbound"
+	"github.com/leandrogutierrez148/acomm/internal/interfaces"
+	"github.com/leandrogutierrez148/acomm/internal/models"
+	"github.com/leandrogutierrez148/acomm/internal/outbound"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/shopspring/decimal"

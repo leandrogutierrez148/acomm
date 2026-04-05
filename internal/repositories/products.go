@@ -3,8 +3,8 @@ package repositories
 import (
 	"strconv"
 
-	"github.com/lgutierrez148/acomm/internal/interfaces"
-	"github.com/lgutierrez148/acomm/internal/models"
+	"github.com/leandrogutierrez148/acomm/internal/interfaces"
+	"github.com/leandrogutierrez148/acomm/internal/models"
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 )

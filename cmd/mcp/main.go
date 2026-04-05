@@ -5,17 +5,17 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/lgutierrez148/acomm/internal/database"
-	"github.com/lgutierrez148/acomm/internal/mcp"
-	"github.com/lgutierrez148/acomm/internal/mcp/brands"
-	"github.com/lgutierrez148/acomm/internal/mcp/categories"
-	"github.com/lgutierrez148/acomm/internal/mcp/item_images"
-	"github.com/lgutierrez148/acomm/internal/mcp/items"
-	"github.com/lgutierrez148/acomm/internal/mcp/items_specifications"
-	"github.com/lgutierrez148/acomm/internal/mcp/orders"
-	"github.com/lgutierrez148/acomm/internal/mcp/products"
-	"github.com/lgutierrez148/acomm/internal/mcp/products_specifications"
-	"github.com/lgutierrez148/acomm/internal/repositories"
+	"github.com/leandrogutierrez148/acomm/internal/database"
+	"github.com/leandrogutierrez148/acomm/internal/mcp"
+	"github.com/leandrogutierrez148/acomm/internal/mcp/brands"
+	"github.com/leandrogutierrez148/acomm/internal/mcp/categories"
+	"github.com/leandrogutierrez148/acomm/internal/mcp/item_images"
+	"github.com/leandrogutierrez148/acomm/internal/mcp/items"
+	"github.com/leandrogutierrez148/acomm/internal/mcp/items_specifications"
+	"github.com/leandrogutierrez148/acomm/internal/mcp/orders"
+	"github.com/leandrogutierrez148/acomm/internal/mcp/products"
+	"github.com/leandrogutierrez148/acomm/internal/mcp/products_specifications"
+	"github.com/leandrogutierrez148/acomm/internal/repositories"
 )
 
 func main() {

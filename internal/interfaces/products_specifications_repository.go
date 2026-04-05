@@ -1,6 +1,6 @@
 package interfaces
 
-import "github.com/lgutierrez148/acomm/internal/models"
+import "github.com/leandrogutierrez148/acomm/internal/models"
 
 type IProductsSpecificationsRepository interface {
 	Create(spec *models.ProductSpecification) error

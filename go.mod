@@ -1,4 +1,4 @@
-module github.com/lgutierrez148/acomm
+module github.com/leandrogutierrez148/acomm
 
 go 1.24.3
 

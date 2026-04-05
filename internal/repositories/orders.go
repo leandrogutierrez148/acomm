@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"github.com/lgutierrez148/acomm/internal/interfaces"
-	"github.com/lgutierrez148/acomm/internal/models"
+	"github.com/leandrogutierrez148/acomm/internal/interfaces"
+	"github.com/leandrogutierrez148/acomm/internal/models"
 )
 
 type OrdersRepository struct {

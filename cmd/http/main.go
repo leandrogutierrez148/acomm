@@ -8,17 +8,17 @@ import (
 	"syscall"
 
 	"github.com/joho/godotenv"
-	"github.com/lgutierrez148/acomm/internal/database"
-	http_server "github.com/lgutierrez148/acomm/internal/http"
-	"github.com/lgutierrez148/acomm/internal/http/brands"
-	"github.com/lgutierrez148/acomm/internal/http/categories"
-	"github.com/lgutierrez148/acomm/internal/http/item_images"
-	"github.com/lgutierrez148/acomm/internal/http/items"
-	"github.com/lgutierrez148/acomm/internal/http/items_specifications"
-	"github.com/lgutierrez148/acomm/internal/http/orders"
-	"github.com/lgutierrez148/acomm/internal/http/products"
-	"github.com/lgutierrez148/acomm/internal/http/products_specifications"
-	"github.com/lgutierrez148/acomm/internal/repositories"
+	"github.com/leandrogutierrez148/acomm/internal/database"
+	http_server "github.com/leandrogutierrez148/acomm/internal/http"
+	"github.com/leandrogutierrez148/acomm/internal/http/brands"
+	"github.com/leandrogutierrez148/acomm/internal/http/categories"
+	"github.com/leandrogutierrez148/acomm/internal/http/item_images"
+	"github.com/leandrogutierrez148/acomm/internal/http/items"
+	"github.com/leandrogutierrez148/acomm/internal/http/items_specifications"
+	"github.com/leandrogutierrez148/acomm/internal/http/orders"
+	"github.com/leandrogutierrez148/acomm/internal/http/products"
+	"github.com/leandrogutierrez148/acomm/internal/http/products_specifications"
+	"github.com/leandrogutierrez148/acomm/internal/repositories"
 )
 
 func main() {

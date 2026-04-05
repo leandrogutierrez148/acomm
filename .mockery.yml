@@ -1,18 +1,18 @@
 all: false
-dir: 'internal/mocks/'
+dir: "internal/mocks/"
 filename: "mock{{.InterfaceName}}.go"
 force-file-write: true
 formatter: goimports
 include-auto-generated: false
 log-level: info
-structname: '{{.Mock}}{{.InterfaceName}}'
-pkgname: 'mocks'
+structname: "{{.Mock}}{{.InterfaceName}}"
+pkgname: "mocks"
 recursive: false
 require-template-schema-exists: true
 template: testify
-template-schema: '{{.Template}}.schema.json'
+template-schema: "{{.Template}}.schema.json"
 packages:
-  github.com/lgutierrez148/acomm:
+  github.com/leandrogutierrez148/acomm:
     config:
       all: true
-      recursive: True
+      recursive: true

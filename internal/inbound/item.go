@@ -3,7 +3,7 @@ package inbound
 import (
 	"time"
 
-	"github.com/lgutierrez148/acomm/internal/models"
+	"github.com/leandrogutierrez148/acomm/internal/models"
 )
 
 type CreateItemRequest struct {

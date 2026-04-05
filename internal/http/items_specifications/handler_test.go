@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lgutierrez148/acomm/internal/inbound"
-	"github.com/lgutierrez148/acomm/internal/mocks"
-	"github.com/lgutierrez148/acomm/internal/models"
-	"github.com/lgutierrez148/acomm/internal/outbound"
+	"github.com/leandrogutierrez148/acomm/internal/inbound"
+	"github.com/leandrogutierrez148/acomm/internal/mocks"
+	"github.com/leandrogutierrez148/acomm/internal/models"
+	"github.com/leandrogutierrez148/acomm/internal/outbound"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

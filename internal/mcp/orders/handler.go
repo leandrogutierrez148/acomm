@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/lgutierrez148/acomm/internal/inbound"
-	"github.com/lgutierrez148/acomm/internal/interfaces"
+	"github.com/leandrogutierrez148/acomm/internal/inbound"
+	"github.com/leandrogutierrez148/acomm/internal/interfaces"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
