@@ -43,7 +43,7 @@ make up
 
 Visit: http://localhost:8501/
 
-![agent workflow](/assets/images/acomm-agent.gif)
+![agent workflow](acomm-agent.gif)
 
 ### Development Dependencies
 Ensure you have Go and Docker installed before proceeding.
