@@ -96,6 +96,21 @@ func TestHandleGetByID(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, rr.Code)
 	})
+
+	t.Run("db error", func(t *testing.T) {
+		repo := mocks.NewMockIProductsSpecificationsRepository(t)
+		handler := NewProductsSpecificationsHandler(repo)
+
+		repo.EXPECT().FindByID(uint(1)).Return(nil, errors.New("not found"))
+
+		req := httptest.NewRequest(http.MethodGet, "/products-specifications/1", nil)
+		req.SetPathValue("id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleGetByID(rr, req)
+
+		assert.Equal(t, http.StatusNotFound, rr.Code)
+	})
 }
 
 func TestHandleGetByProductID(t *testing.T) {
@@ -121,6 +136,34 @@ func TestHandleGetByProductID(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Len(t, resp.Specifications, 1)
 	})
+
+	t.Run("invalid product_id", func(t *testing.T) {
+		repo := mocks.NewMockIProductsSpecificationsRepository(t)
+		handler := NewProductsSpecificationsHandler(repo)
+
+		req := httptest.NewRequest(http.MethodGet, "/products-specifications/product/abc", nil)
+		req.SetPathValue("product_id", "abc")
+		rr := httptest.NewRecorder()
+
+		handler.HandleGetByProductID(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("db error", func(t *testing.T) {
+		repo := mocks.NewMockIProductsSpecificationsRepository(t)
+		handler := NewProductsSpecificationsHandler(repo)
+
+		repo.EXPECT().FindByProductID(uint(1)).Return(nil, errors.New("db error"))
+
+		req := httptest.NewRequest(http.MethodGet, "/products-specifications/product/1", nil)
+		req.SetPathValue("product_id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleGetByProductID(rr, req)
+
+		assert.Equal(t, http.StatusInternalServerError, rr.Code)
+	})
 }
 
 func TestHandleCreate(t *testing.T) {
@@ -143,5 +186,147 @@ func TestHandleCreate(t *testing.T) {
 		handler.HandleCreate(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Code)
+	})
+
+	t.Run("bad json", func(t *testing.T) {
+		repo := mocks.NewMockIProductsSpecificationsRepository(t)
+		handler := NewProductsSpecificationsHandler(repo)
+
+		req := httptest.NewRequest(http.MethodPost, "/products-specifications", bytes.NewBuffer([]byte("invalid json")))
+		rr := httptest.NewRecorder()
+
+		handler.HandleCreate(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("db error", func(t *testing.T) {
+		repo := mocks.NewMockIProductsSpecificationsRepository(t)
+		handler := NewProductsSpecificationsHandler(repo)
+
+		reqBody := inbound.CreateProductSpecificationRequest{ProductID: 1, Key: "Color", Value: "Red"}
+		body, _ := json.Marshal(reqBody)
+
+		repo.EXPECT().Create(mock.AnythingOfType("*models.ProductSpecification")).Return(errors.New("db error"))
+
+		req := httptest.NewRequest(http.MethodPost, "/products-specifications", bytes.NewBuffer(body))
+		rr := httptest.NewRecorder()
+
+		handler.HandleCreate(rr, req)
+
+		assert.Equal(t, http.StatusInternalServerError, rr.Code)
+	})
+}
+
+func TestHandleUpdate(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		repo := mocks.NewMockIProductsSpecificationsRepository(t)
+		handler := NewProductsSpecificationsHandler(repo)
+
+		reqBody := inbound.UpdateProductSpecificationRequest{ProductID: 1, Key: "Color", Value: "Blue"}
+		body, _ := json.Marshal(reqBody)
+
+		spec := reqBody.ToDomain()
+		spec.ID = 1
+		repo.EXPECT().Update(spec).Return(nil)
+
+		req := httptest.NewRequest(http.MethodPut, "/products-specifications/1", bytes.NewBuffer(body))
+		req.SetPathValue("id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleUpdate(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Code)
+	})
+
+	t.Run("invalid id", func(t *testing.T) {
+		repo := mocks.NewMockIProductsSpecificationsRepository(t)
+		handler := NewProductsSpecificationsHandler(repo)
+
+		req := httptest.NewRequest(http.MethodPut, "/products-specifications/abc", bytes.NewBuffer([]byte("{}")))
+		req.SetPathValue("id", "abc")
+		rr := httptest.NewRecorder()
+
+		handler.HandleUpdate(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("bad json", func(t *testing.T) {
+		repo := mocks.NewMockIProductsSpecificationsRepository(t)
+		handler := NewProductsSpecificationsHandler(repo)
+
+		req := httptest.NewRequest(http.MethodPut, "/products-specifications/1", bytes.NewBuffer([]byte("invalid json")))
+		req.SetPathValue("id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleUpdate(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("db error", func(t *testing.T) {
+		repo := mocks.NewMockIProductsSpecificationsRepository(t)
+		handler := NewProductsSpecificationsHandler(repo)
+
+		reqBody := inbound.UpdateProductSpecificationRequest{ProductID: 1, Key: "Color", Value: "Blue"}
+		body, _ := json.Marshal(reqBody)
+
+		spec := reqBody.ToDomain()
+		spec.ID = 1
+		repo.EXPECT().Update(spec).Return(errors.New("db error"))
+
+		req := httptest.NewRequest(http.MethodPut, "/products-specifications/1", bytes.NewBuffer(body))
+		req.SetPathValue("id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleUpdate(rr, req)
+
+		assert.Equal(t, http.StatusInternalServerError, rr.Code)
+	})
+}
+
+func TestHandleDelete(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		repo := mocks.NewMockIProductsSpecificationsRepository(t)
+		handler := NewProductsSpecificationsHandler(repo)
+
+		repo.EXPECT().Delete(uint(1)).Return(nil)
+
+		req := httptest.NewRequest(http.MethodDelete, "/products-specifications/1", nil)
+		req.SetPathValue("id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleDelete(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Code)
+	})
+
+	t.Run("invalid id", func(t *testing.T) {
+		repo := mocks.NewMockIProductsSpecificationsRepository(t)
+		handler := NewProductsSpecificationsHandler(repo)
+
+		req := httptest.NewRequest(http.MethodDelete, "/products-specifications/abc", nil)
+		req.SetPathValue("id", "abc")
+		rr := httptest.NewRecorder()
+
+		handler.HandleDelete(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("db error", func(t *testing.T) {
+		repo := mocks.NewMockIProductsSpecificationsRepository(t)
+		handler := NewProductsSpecificationsHandler(repo)
+
+		repo.EXPECT().Delete(uint(1)).Return(errors.New("db error"))
+
+		req := httptest.NewRequest(http.MethodDelete, "/products-specifications/1", nil)
+		req.SetPathValue("id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleDelete(rr, req)
+
+		assert.Equal(t, http.StatusInternalServerError, rr.Code)
 	})
 }

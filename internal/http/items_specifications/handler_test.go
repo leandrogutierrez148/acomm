@@ -96,6 +96,21 @@ func TestHandleGetByID(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, rr.Code)
 	})
+
+	t.Run("db error", func(t *testing.T) {
+		repo := mocks.NewMockIItemsSpecificationsRepository(t)
+		handler := NewItemsSpecificationsHandler(repo)
+
+		repo.EXPECT().FindByID(uint(1)).Return(nil, errors.New("not found"))
+
+		req := httptest.NewRequest(http.MethodGet, "/items-specifications/1", nil)
+		req.SetPathValue("id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleGetByID(rr, req)
+
+		assert.Equal(t, http.StatusNotFound, rr.Code)
+	})
 }
 
 func TestHandleGetByItemID(t *testing.T) {
@@ -121,6 +136,34 @@ func TestHandleGetByItemID(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Len(t, resp.Specifications, 1)
 	})
+
+	t.Run("invalid item_id", func(t *testing.T) {
+		repo := mocks.NewMockIItemsSpecificationsRepository(t)
+		handler := NewItemsSpecificationsHandler(repo)
+
+		req := httptest.NewRequest(http.MethodGet, "/items-specifications/item/abc", nil)
+		req.SetPathValue("item_id", "abc")
+		rr := httptest.NewRecorder()
+
+		handler.HandleGetByItemID(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("db error", func(t *testing.T) {
+		repo := mocks.NewMockIItemsSpecificationsRepository(t)
+		handler := NewItemsSpecificationsHandler(repo)
+
+		repo.EXPECT().FindByItemID(uint(1)).Return(nil, errors.New("db error"))
+
+		req := httptest.NewRequest(http.MethodGet, "/items-specifications/item/1", nil)
+		req.SetPathValue("item_id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleGetByItemID(rr, req)
+
+		assert.Equal(t, http.StatusInternalServerError, rr.Code)
+	})
 }
 
 func TestHandleCreate(t *testing.T) {
@@ -143,5 +186,147 @@ func TestHandleCreate(t *testing.T) {
 		handler.HandleCreate(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Code)
+	})
+
+	t.Run("bad json", func(t *testing.T) {
+		repo := mocks.NewMockIItemsSpecificationsRepository(t)
+		handler := NewItemsSpecificationsHandler(repo)
+
+		req := httptest.NewRequest(http.MethodPost, "/items-specifications", bytes.NewBuffer([]byte("invalid json")))
+		rr := httptest.NewRecorder()
+
+		handler.HandleCreate(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("db error", func(t *testing.T) {
+		repo := mocks.NewMockIItemsSpecificationsRepository(t)
+		handler := NewItemsSpecificationsHandler(repo)
+
+		reqBody := inbound.CreateItemSpecificationRequest{ItemID: 1, Key: "Color", Value: "Red"}
+		body, _ := json.Marshal(reqBody)
+
+		repo.EXPECT().Create(mock.AnythingOfType("*models.ItemSpecification")).Return(errors.New("db error"))
+
+		req := httptest.NewRequest(http.MethodPost, "/items-specifications", bytes.NewBuffer(body))
+		rr := httptest.NewRecorder()
+
+		handler.HandleCreate(rr, req)
+
+		assert.Equal(t, http.StatusInternalServerError, rr.Code)
+	})
+}
+
+func TestHandleUpdate(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		repo := mocks.NewMockIItemsSpecificationsRepository(t)
+		handler := NewItemsSpecificationsHandler(repo)
+
+		reqBody := inbound.UpdateItemSpecificationRequest{ItemID: 1, Key: "Color", Value: "Blue"}
+		body, _ := json.Marshal(reqBody)
+
+		spec := reqBody.ToDomain()
+		spec.ID = 1
+		repo.EXPECT().Update(spec).Return(nil)
+
+		req := httptest.NewRequest(http.MethodPut, "/items-specifications/1", bytes.NewBuffer(body))
+		req.SetPathValue("id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleUpdate(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Code)
+	})
+
+	t.Run("invalid id", func(t *testing.T) {
+		repo := mocks.NewMockIItemsSpecificationsRepository(t)
+		handler := NewItemsSpecificationsHandler(repo)
+
+		req := httptest.NewRequest(http.MethodPut, "/items-specifications/abc", bytes.NewBuffer([]byte("{}")))
+		req.SetPathValue("id", "abc")
+		rr := httptest.NewRecorder()
+
+		handler.HandleUpdate(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("bad json", func(t *testing.T) {
+		repo := mocks.NewMockIItemsSpecificationsRepository(t)
+		handler := NewItemsSpecificationsHandler(repo)
+
+		req := httptest.NewRequest(http.MethodPut, "/items-specifications/1", bytes.NewBuffer([]byte("invalid json")))
+		req.SetPathValue("id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleUpdate(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("db error", func(t *testing.T) {
+		repo := mocks.NewMockIItemsSpecificationsRepository(t)
+		handler := NewItemsSpecificationsHandler(repo)
+
+		reqBody := inbound.UpdateItemSpecificationRequest{ItemID: 1, Key: "Color", Value: "Blue"}
+		body, _ := json.Marshal(reqBody)
+
+		spec := reqBody.ToDomain()
+		spec.ID = 1
+		repo.EXPECT().Update(spec).Return(errors.New("db error"))
+
+		req := httptest.NewRequest(http.MethodPut, "/items-specifications/1", bytes.NewBuffer(body))
+		req.SetPathValue("id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleUpdate(rr, req)
+
+		assert.Equal(t, http.StatusInternalServerError, rr.Code)
+	})
+}
+
+func TestHandleDelete(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		repo := mocks.NewMockIItemsSpecificationsRepository(t)
+		handler := NewItemsSpecificationsHandler(repo)
+
+		repo.EXPECT().Delete(uint(1)).Return(nil)
+
+		req := httptest.NewRequest(http.MethodDelete, "/items-specifications/1", nil)
+		req.SetPathValue("id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleDelete(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Code)
+	})
+
+	t.Run("invalid id", func(t *testing.T) {
+		repo := mocks.NewMockIItemsSpecificationsRepository(t)
+		handler := NewItemsSpecificationsHandler(repo)
+
+		req := httptest.NewRequest(http.MethodDelete, "/items-specifications/abc", nil)
+		req.SetPathValue("id", "abc")
+		rr := httptest.NewRecorder()
+
+		handler.HandleDelete(rr, req)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+	})
+
+	t.Run("db error", func(t *testing.T) {
+		repo := mocks.NewMockIItemsSpecificationsRepository(t)
+		handler := NewItemsSpecificationsHandler(repo)
+
+		repo.EXPECT().Delete(uint(1)).Return(errors.New("db error"))
+
+		req := httptest.NewRequest(http.MethodDelete, "/items-specifications/1", nil)
+		req.SetPathValue("id", "1")
+		rr := httptest.NewRecorder()
+
+		handler.HandleDelete(rr, req)
+
+		assert.Equal(t, http.StatusInternalServerError, rr.Code)
 	})
 }

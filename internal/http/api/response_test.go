@@ -65,3 +65,31 @@ func TestErrorResponse(t *testing.T) {
 		assert.JSONEq(t, expected, recorder.Body.String(), "Response body does not match expected")
 	})
 }
+
+func TestOKCreatedResponse(t *testing.T) {
+	type sampleResponse struct {
+		Message string `json:"message"`
+	}
+
+	t.Run("successful http201 json response", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
+		OKCreatedResponse(recorder, sampleResponse{Message: "Created"})
+
+		assert.Equal(t, http.StatusCreated, recorder.Code)
+		assert.Equal(t, "application/json", recorder.Header().Get("Content-Type"))
+
+		expected := `{"message":"Created"}`
+		assert.JSONEq(t, expected, recorder.Body.String())
+	})
+
+	t.Run("error on encoding response", func(t *testing.T) {
+		recorder := httptest.NewRecorder()
+		OKCreatedResponse(recorder, make(chan int))
+
+		assert.Equal(t, http.StatusInternalServerError, recorder.Code)
+		assert.Equal(t, "application/json", recorder.Header().Get("Content-Type"))
+
+		expected := `{"error":"json: unsupported type: chan int"}`
+		assert.JSONEq(t, expected, recorder.Body.String())
+	})
+}
