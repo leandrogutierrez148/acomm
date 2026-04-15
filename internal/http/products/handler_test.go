@@ -127,6 +127,27 @@ func TestGetPaginatedEndpoint(t *testing.T) {
 		assert.JSONEq(t, string(expected), recorder.Body.String(), "Response body does not match expected")
 	})
 
+	t.Run("with non-zero Offset query param", func(t *testing.T) {
+		repo := mocks.NewMockIProductsRepository(t)
+		handler := NewProductsHandler(repo)
+
+		prods := []models.Product{
+			{ID: 3, Items: []models.Item{{Price: 50}}},
+		}
+
+		repo.EXPECT().GetProductsPaginated(5, 20).Return(prods, int64(10), nil)
+
+		recorder := httptest.NewRecorder()
+		// Note: the handler reads "Offset" (capital O) from the query string
+		req, err := http.NewRequest("GET", "/products?Offset=5&limit=20", nil)
+		if err != nil {
+			t.Fatalf("Failed to create request: %v", err)
+		}
+
+		handler.HandleGetPaginated(recorder, req)
+		assert.Equal(t, http.StatusOK, recorder.Code)
+	})
+
 	t.Run("error retrieving paginated catalog", func(t *testing.T) {
 		repo := mocks.NewMockIProductsRepository(t)
 		handler := NewProductsHandler(repo)
@@ -191,6 +212,28 @@ func TestSearchPaginatedEndpoint(t *testing.T) {
 		expected, _ := json.Marshal(resp)
 
 		assert.JSONEq(t, string(expected), recorder.Body.String(), "Response body does not match expected")
+	})
+
+	t.Run("with non-zero offset and limit", func(t *testing.T) {
+		repo := mocks.NewMockIProductsRepository(t)
+		handler := NewProductsHandler(repo)
+
+		prods := []models.Product{
+			{ID: 3, Items: []models.Item{{Price: 30}}},
+		}
+
+		repo.EXPECT().
+			SearchProductsPaginated(5, 20, "", decimal.Zero).
+			Return(prods, int64(10), nil)
+
+		recorder := httptest.NewRecorder()
+		req, err := http.NewRequest("GET", "/products?offset=5&limit=20", nil)
+		if err != nil {
+			t.Fatalf("Failed to create request: %v", err)
+		}
+
+		handler.HandleSearchPaginated(recorder, req)
+		assert.Equal(t, http.StatusOK, recorder.Code)
 	})
 
 	t.Run("error searching paginated catalog", func(t *testing.T) {
