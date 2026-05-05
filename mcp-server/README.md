@@ -41,6 +41,17 @@ Ensure you have Go installed before proceeding.
 mockery
 ```
 
+### Environment Variables
+
+The server requires the following environment variables:
+
+- `POSTGRES_HOST`: Database host (default: `localhost`)
+- `POSTGRES_PORT`: Database port (default: `5432`)
+- `POSTGRES_USER`: Database user (default: `postgres`)
+- `POSTGRES_PASSWORD`: Database password
+- `POSTGRES_DB`: Database name (default: `acomm_mcp`)
+- `MCP_PORT`: Port to run the MCP server on (default: `8080`)
+
 ### Useful Commands
 
 You can run standard Go commands locally to develop:

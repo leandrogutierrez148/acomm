@@ -23,6 +23,13 @@ source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
 uv pip install -e ".[dev]"
 ```
 
+### Environment Variables
+
+The frontend relies on the following environment variables to locate the APIs:
+
+- `BACKEND_URL`: Complete URL to the backend's chat endpoint (default: `http://localhost:8000/api/v1/chat`).
+- `AUTH_URL`: Complete URL to the auth server's authentication endpoint (default: `http://localhost:8081/api/v1/auth`).
+
 ### Running Locally
 
 Make sure the backend is running and accessible (by default it expects the backend at `http://localhost:8000/api/v1/chat`). You can adjust this using the `BACKEND_URL` environment variable.

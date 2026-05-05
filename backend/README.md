@@ -25,6 +25,13 @@ ruff format .
 mypy app/
 ```
 
+### Environment Variables
+
+The backend requires the following environment variables:
+
+- `DATABASE_URL`: Connection string for PostgreSQL (e.g., `postgresql+asyncpg://postgres:password@localhost:5433/acomm_agent`)
+- `ANTHROPIC_API_KEY`: API key for Antropic models.
+
 ### Running Locally
 
 To run the FastAPI server locally (outside of Docker):
