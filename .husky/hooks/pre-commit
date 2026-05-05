@@ -1,4 +1,16 @@
 #!/bin/sh
-go fmt .
-go build -v ./... 
-go test -v ./...
+
+# Navigate to the Go project directory (mcp-server)
+# Works from both the main repo and any worktree
+REPO_ROOT=$(git rev-parse --show-toplevel)
+MCP_DIR="$REPO_ROOT/mcp-server"
+
+if [ -d "$MCP_DIR" ]; then
+  echo "Running Go checks in $MCP_DIR..."
+  cd "$MCP_DIR" || exit 1
+  go fmt ./...
+  go build -v ./...
+  go test -v ./...
+else
+  echo "mcp-server/ not found, skipping Go checks."
+fi

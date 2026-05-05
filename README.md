@@ -1,69 +1,77 @@
-# Acomm (Agent Commerce) — shopping infrastructure for AI agents.
+# Acomm (Agent Commerce)
 
-This repository contains a Go application for managing an e-commerce catalog and ordering system. It includes functionalities for CRUD operations, an HTTP REST API, and an MCP (Model Context Protocol) server tailored for AI agent integrations.
+Acomm is a modern shopping infrastructure designed specifically for AI agents. This repository contains the complete stack for the Acomm platform, separated into bounded contexts and decoupled services.
 
-## Managed Entities
+## Architecture
 
-The application manages the following core domain entities:
-- **Products**: Main product catalogue entries.
-- **Categories**: Taxonomies for organizing products.
-- **Brands**: Brand information for items.
-- **Specifications**: Details and characteristics linked to items or products.
-- **Items**: Individual variants or stock-keeping units (formerly mapped as variations).
-- **Orders**: Customer orders tracking purchased items.
+```plantuml
+@startuml
+skinparam componentStyle rectangle
 
-## Project Structure
+component "Client App / Frontend" as Client
 
-The project is structured following clean architecture and bounded contexts:
+package "Backend" {
+    component "FastAPI Gateway" as API
+    component "LangGraph Orchestrator" as LG
+}
 
-1. **cmd/**: Application entry points.
-   - `http/main.go`: The main application entry point, serves the REST API.
-   - `mcp/main.go`: The entry point for the Model Context Protocol server.
+package "MCP Server" {
+    component "VTEX MCP Bridge" as VTEX_MCP
+    component "Mercado Libre MCP Bridge" as ML_MCP
+}
 
-2. **app/**: Contains the application/delivery logic.
-   - `http/`: REST API handlers and routing details.
-   - `mcp/`: MCP tool implementations exposing system capabilities to AI agents.
-   - `inbound/`: Request DTOs and mappers to domain models.
-   - `outbound/`: Response DTOs and serializations to the external world.
+package "Identity & Security" {
+    component "SSO Provider (Auth0/Keycloak)" as SSO
+    component "Credential Vault" as Vault
+}
 
-3. **models/**: Contains the core domain models and structs.
-4. **interfaces/**: Defines interfaces for repositories and decoupled services.
-5. **repositories/**: Concrete repository implementations for database operations.
-6. **database/**: Database connection and configuration utilities.
-7. **sql/**: Database migration and setup scripts.
-8. `.env`: Environment variables file for configuration.
+package "Agent State & Memory" {
+    database "PostgreSQL (Checkpoints)" as DB
+}
 
-## Setup & Tools
+cloud "VTEX API" as VTEX
+cloud "Mercado Libre API" as ML
 
-Make sure you have `docker` installed and running.
+Client --> API : Auth Token
+API --> LG : Session ID
+API --> SSO
+LG --> Vault : Fetch User Token
 
-```bash
-make up
+LG <--> DB
+
+LG --> VTEX_MCP : MCP Protocol
+LG --> ML_MCP : MCP Protocol
+
+VTEX_MCP --> VTEX : REST
+ML_MCP --> ML : REST
+@enduml
 ```
 
-Visit: http://localhost:8501/
+The project is structured as a monorepo with three main components:
 
-![agent workflow](/assets/images/acomm-agent.gif)
+1. **[`mcp-server`](./mcp-server/)**: A Model Context Protocol (MCP) server written in Go. It manages the core e-commerce catalog (products, categories, brands, orders) and exposes these capabilities as tools that an AI agent can natively consume.
+2. **[`backend`](./backend/)**: The agentic "brain" built with Python, FastAPI, and LangGraph. It acts as the routing and reasoning layer, connecting to the MCP server to fulfill user requests and maintaining conversation state in PostgreSQL.
+3. **[`frontend`](./frontend/)**: A Streamlit-based web interface for users to interact with the Acomm purchasing agent.
 
-### Development Dependencies
-Ensure you have Go and Docker installed before proceeding.
-- [`mockery`](https://vektra.github.io/mockery/latest/) – used to generate interface mocks for testing.
-- [`husky`](https://github.com/automation-co/husky) – used to manage Git hooks.
+## Quickstart
+
+The easiest way to run the entire stack locally is using Docker Compose. Make sure you have Docker installed and your `.env` file configured.
 
 ```bash
-# Generate mocks for interfaces
-mockery
-
-# Install git hooks
-husky install
+# Start all services (frontend, backend, mcp-server, and databases)
+docker compose up --build
 ```
 
-### Useful Commands
+Once the containers are running, you can access:
+- **Frontend UI**: http://localhost:8501
+- **Backend API**: http://localhost:8000
+- **MCP Server**: http://localhost:8080
 
-You can use the provided Makefile to manage the environment:
+![Acomm Workflow](acomm-agent.gif)
 
-- `make tidy`: Will install all dependencies.
-- `make up`: Will start the required database and infrastructure services via Docker Compose.
-- `make test`: Will run the unit and integration test suites.
-- `make run`: Will start the HTTP application.
-- `make down`: Will stop the Docker containers.
+## Development
+
+For detailed development instructions, please refer to the README files in each respective project directory:
+- [MCP Server README](./mcp-server/README.md)
+- [Backend README](./backend/README.md)
+- [Frontend README](./frontend/README.md)
