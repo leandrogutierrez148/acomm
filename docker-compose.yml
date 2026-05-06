@@ -1,54 +1,123 @@
 services:
-  postgres:
+  postgres-mcp:
     image: postgres:17.5
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
-      POSTGRES_DB: challenge
+      POSTGRES_DB: acomm_mcp
     ports:
       - "5432:5432"
     volumes:
-      - ./sql:/docker-entrypoint-initdb.d
+      - pgdata-mcp:/var/lib/postgresql/data
+      - ./mcp-server/sql:/docker-entrypoint-initdb.d
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d challenge -U postgres" ]
+      test: [ "CMD-SHELL", "pg_isready -d acomm_mcp -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  http-server:
-    build:
-      context: .
-      dockerfile: build/http.Dockerfile
-    ports:
-      - "127.0.0.1:8484:8484"
+  postgres-agent:
+    image: postgres:17.5
     environment:
-      POSTGRES_HOST: postgres
-    depends_on:
-      postgres:
-        condition: service_healthy
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: acomm_agent
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata-agent:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d acomm_agent -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-auth:
+    image: postgres:17.5
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: acomm_auth
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata-auth:/var/lib/postgresql/data
+      - ./auth-server/sql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d acomm_auth -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   mcp-server:
     build:
-      context: .
-      dockerfile: build/mcp.Dockerfile
+      context: ./mcp-server
     ports:
-      - "127.0.0.1:8080:8080"
+      - "8080:8080"
+    env_file:
+      - .env
     environment:
-      POSTGRES_HOST: postgres
-      MCP_PORT: "8080"
+      POSTGRES_HOST: postgres-mcp
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: acomm_mcp
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      MCP_PORT: 8080
     depends_on:
-      postgres:
+      postgres-mcp:
         condition: service_healthy
 
-  chat-agent:
+  auth-server:
     build:
-      context: .
-      dockerfile: build/agent.Dockerfile
+      context: ./auth-server
     ports:
-      - "127.0.0.1:8501:8501"
+      - "8081:8081"
+    env_file:
+      - .env
     environment:
-      MCP_SERVER_URL: "http://host.docker.internal:8080/sse"
-    volumes:
-      - ./agent:/app
+      POSTGRES_HOST: postgres-auth
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: acomm_auth
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      HTTP_PORT: 8081
     depends_on:
-      - mcp-server
+      postgres-auth:
+        condition: service_healthy
+
+  backend:
+    build:
+      context: ./backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:password@postgres-agent:5432/acomm_agent
+      # Add your API keys here or use an .env file
+      # ANTHROPIC_API_KEY: "your-api-key"
+    depends_on:
+      postgres-agent:
+        condition: service_healthy
+    volumes:
+      # Mount the code for live-reloading during development
+      - ./backend:/app
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8501:8501"
+    environment:
+      BACKEND_URL: "http://backend:8000/api/v1/chat"
+    depends_on:
+      - backend
+    volumes:
+      # Mount the code for live-reloading during development
+      - ./frontend:/app
+
+volumes:
+  pgdata-mcp:
+  pgdata-agent:
+  pgdata-auth:

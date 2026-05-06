@@ -6,5 +6,7 @@ __debug_bin*
 coverage.out
 mocks
 .venv
+.env
 secrets
 dist
+__pycache__

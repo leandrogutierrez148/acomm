@@ -1,0 +1,41 @@
+@startuml
+skinparam componentStyle rectangle
+
+component "Client App / Frontend" as Client
+
+package "Backend" {
+    component "FastAPI Gateway" as API
+    component "LangGraph Orchestrator" as LG
+}
+
+package "MCP Server" {
+    component "Marketplaces - MCP Bridge" as MCP
+}
+
+package "Identity & Security" {
+    component "Auth Server" as SSO
+}
+
+package "Databases" {
+    database "acomm_agent" as DB_AGENT
+    database "acomm_auth" as DB_AUTH
+    database "acomm_mcp" as DB_MCP
+}
+
+
+
+cloud "VTEX API" as VTEX
+cloud "Mercado Libre API" as ML
+
+Client --> API : Auth Token
+API --> LG : Session ID
+API --> SSO
+LG <--> DB_AGENT
+SSO <--> DB_AUTH
+MCP <--> DB_MCP
+
+LG --> MCP : MCP Protocol
+
+MCP --> VTEX : REST
+MCP --> ML : REST
+@enduml

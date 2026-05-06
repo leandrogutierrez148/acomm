@@ -1,0 +1,21 @@
+### Register a new user
+POST /api/v1/auth/register HTTP/1.1
+Host: localhost:8081
+Content-Type: application/json
+
+{
+    "email": "test@example.com",
+    "password": "mysecurepassword"
+}
+
+###
+
+### Login with the created user
+POST /api/v1/auth/login HTTP/1.1
+Host: localhost:8081
+Content-Type: application/json
+
+{
+    "email": "leandroleandrogutierrez148@gmail.com",
+    "password": "sssss"
+}

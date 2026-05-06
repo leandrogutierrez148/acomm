@@ -1,69 +1,45 @@
-# Acomm (Agent Commerce) — shopping infrastructure for AI agents.
+# Acomm (Agent Commerce)
 
-This repository contains a Go application for managing an e-commerce catalog and ordering system. It includes functionalities for CRUD operations, an HTTP REST API, and an MCP (Model Context Protocol) server tailored for AI agent integrations.
+Acomm is a modern shopping infrastructure designed specifically for AI agents. This repository contains the complete stack for the Acomm platform, separated into bounded contexts and decoupled services.
 
-## Managed Entities
+## Architecture
 
-The application manages the following core domain entities:
-- **Products**: Main product catalogue entries.
-- **Categories**: Taxonomies for organizing products.
-- **Brands**: Brand information for items.
-- **Specifications**: Details and characteristics linked to items or products.
-- **Items**: Individual variants or stock-keeping units (formerly mapped as variations).
-- **Orders**: Customer orders tracking purchased items.
+![Acomm Architecture](architecture.png)
 
-## Project Structure
+The project is structured as a monorepo with four main components:
 
-The project is structured following clean architecture and bounded contexts:
+1. **[`auth-server`](./auth-server/)**: A Go microservice managing user identity, security, and JWT generation, connected to its own dedicated PostgreSQL database.
+2. **[`mcp-server`](./mcp-server/)**: A Model Context Protocol (MCP) server written in Go. It manages the core e-commerce catalog (products, categories, brands, orders) and exposes these capabilities as tools that an AI agent can natively consume.
+3. **[`backend`](./backend/)**: The agentic "brain" built with Python, FastAPI, and LangGraph. It acts as the routing and reasoning layer, connecting to the MCP server to fulfill user requests and maintaining conversation state in PostgreSQL.
+4. **[`frontend`](./frontend/)**: A Streamlit-based web interface for users to interact with the Acomm purchasing agent.
 
-1. **cmd/**: Application entry points.
-   - `http/main.go`: The main application entry point, serves the REST API.
-   - `mcp/main.go`: The entry point for the Model Context Protocol server.
+## Quickstart
 
-2. **app/**: Contains the application/delivery logic.
-   - `http/`: REST API handlers and routing details.
-   - `mcp/`: MCP tool implementations exposing system capabilities to AI agents.
-   - `inbound/`: Request DTOs and mappers to domain models.
-   - `outbound/`: Response DTOs and serializations to the external world.
-
-3. **models/**: Contains the core domain models and structs.
-4. **interfaces/**: Defines interfaces for repositories and decoupled services.
-5. **repositories/**: Concrete repository implementations for database operations.
-6. **database/**: Database connection and configuration utilities.
-7. **sql/**: Database migration and setup scripts.
-8. `.env`: Environment variables file for configuration.
-
-## Setup & Tools
-
-Make sure you have `docker` installed and running.
+The easiest way to run the entire stack locally is using Docker Compose. Make sure you have Docker installed and your `.env` file configured. We provide a `Makefile` to simplify common operations.
 
 ```bash
+# Start all services (frontend, backend, mcp-server, and databases)
 make up
+
+# To stop all services gracefully
+make down
+
+# To stop all services and wipe the databases (remove volumes)
+make clear
 ```
 
-Visit: http://localhost:8501/
+Once the containers are running, you can access:
+- **Frontend UI**: http://localhost:8501
+- **Backend API**: http://localhost:8000
+- **Auth Server API**: http://localhost:8081
+- **MCP Server**: http://localhost:8080
 
-![agent workflow](acomm-agent.gif)
+![Acomm Workflow](acomm-agent.gif)
 
-### Development Dependencies
-Ensure you have Go and Docker installed before proceeding.
-- [`mockery`](https://vektra.github.io/mockery/latest/) – used to generate interface mocks for testing.
-- [`husky`](https://github.com/automation-co/husky) – used to manage Git hooks.
+## Development
 
-```bash
-# Generate mocks for interfaces
-mockery
-
-# Install git hooks
-husky install
-```
-
-### Useful Commands
-
-You can use the provided Makefile to manage the environment:
-
-- `make tidy`: Will install all dependencies.
-- `make up`: Will start the required database and infrastructure services via Docker Compose.
-- `make test`: Will run the unit and integration test suites.
-- `make run`: Will start the HTTP application.
-- `make down`: Will stop the Docker containers.
+For detailed development instructions, please refer to the README files in each respective project directory:
+- [Auth Server README](./auth-server/README.md)
+- [MCP Server README](./mcp-server/README.md)
+- [Backend README](./backend/README.md)
+- [Frontend README](./frontend/README.md)
