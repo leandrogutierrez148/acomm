@@ -12,6 +12,12 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: ['mcp-server', 'auth-server']
+    defaults:
+      run:
+        working-directory: ${{ matrix.service }}
     steps:
       - uses: actions/checkout@v4
 
@@ -21,11 +27,13 @@ jobs:
           go-version: '1.24'
 
       - name: Install Mockery
+        if: hashFiles(format('{0}/.mockery.yml', matrix.service)) != ''
         run: |
           go install github.com/vektra/mockery/v3@v3.5.3
           echo "$GOPATH/bin" >> $GITHUB_PATH
 
       - name: Generate mocks
+        if: hashFiles(format('{0}/.mockery.yml', matrix.service)) != ''
         run: mockery --config .mockery.yml
 
       - name: Run tests
@@ -34,6 +42,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: test
+    strategy:
+      matrix:
+        service: ['mcp-server', 'auth-server']
+    defaults:
+      run:
+        working-directory: ${{ matrix.service }}
     steps:
       - uses: actions/checkout@v4
 
