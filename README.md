@@ -4,7 +4,7 @@ Acomm is a modern shopping infrastructure designed specifically for AI agents. T
 
 ## Architecture
 
-![Acomm Architecture](architecture.png)
+![Acomm Architecture](./public/architecture.png)
 
 The project is structured as a monorepo with four main components:
 
@@ -34,7 +34,7 @@ Once the containers are running, you can access:
 - **Auth Server API**: http://localhost:8081
 - **MCP Server**: http://localhost:8080
 
-![Acomm Workflow](acomm-agent.gif)
+![Acomm Workflow](./public/acomm-agent.gif)
 
 ## Development
 
